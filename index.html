@@ -145,11 +145,11 @@
                 </div>
                 <div class="ig-stats-counts">
                   <div class="ig-stat-col">
-                    <span class="ig-stat-number">51</span>
+                    <span class="ig-stat-number" id="phone-posts">51</span>
                     <span class="ig-stat-name">Posts</span>
                   </div>
                   <div class="ig-stat-col">
-                    <span class="ig-stat-number">797</span>
+                    <span class="ig-stat-number" id="phone-followers">797</span>
                     <span class="ig-stat-name">Followers</span>
                   </div>
                   <div class="ig-stat-col">
@@ -242,21 +242,21 @@
         <div class="ig-sync-box">
           <div class="ig-sync-info">
             <div class="ig-avatar">
-              <img id="ig-avatar-img" src="assets/sndy_avatar.jpg" alt="🧩 @_sndy_edits Official Avatar" />
+              <img id="ig-avatar-img" src="assets/sndy_profile_avatar.png" alt="🧩 @_sndy_edits Official Avatar" />
             </div>
             <div>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <strong id="ig-display-handle" style="font-size: 1.05rem;">@_sndy_edits</strong>
-                <span class="pulse-dot" title="Instagram Graph Sync Active"></span>
-                <span id="ig-sync-pill" style="font-size: 0.75rem; background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); padding: 2px 8px; border-radius: 999px; font-weight: 700;">REALTIME INSTA CONNECTED</span>
+                <strong id="ig-display-handle" style="font-size: 1.05rem; color: #FFF;">@_sndy_edits</strong>
+                <span class="pulse-dot" title="Instagram Live Sync Active"></span>
+                <span id="ig-sync-pill" style="font-size: 0.75rem; background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); padding: 2px 8px; border-radius: 999px; font-weight: 700;">REALTIME INSTA LIVE</span>
               </div>
               <p id="ig-sync-stats" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 3px;">
-                <strong style="color: #FFF;" id="ig-stat-followers">796</strong> Followers • <strong style="color: #FFF;" id="ig-stat-posts">51</strong> Reels & Tutorials • <strong style="color: #FFF;" id="ig-stat-following">3</strong> Following • Collab: <strong style="color: var(--color-orange-light);">@_santhozz_12</strong>
+                <strong style="color: #FFF;" id="ig-stat-followers">797</strong> Followers • <strong style="color: #FFF;" id="ig-stat-posts">51</strong> Reels &amp; Tutorials • <strong style="color: #FFF;" id="ig-stat-following">1</strong> Following • Collab: <strong style="color: var(--color-orange-light);">@_santhozz_12</strong>
               </p>
               <div id="ig-sync-bio" style="font-size: 0.78rem; color: #CBD5E1; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 8px;">
-                <span>🎬 Video Editor & Content Creator</span>
+                <span>🎬 Video Editor &amp; Content Creator</span>
                 <span>•</span>
-                <span>⚡ Reels, Effects & Tutorials</span>
+                <span>⚡ Reels, Effects &amp; Tutorials</span>
                 <span>•</span>
                 <span>📩 DM for Editing</span>
                 <span>•</span>
@@ -266,9 +266,10 @@
           </div>
 
           <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-            <button id="sync-insta-btn" class="btn btn-secondary btn-sm" aria-label="Refresh Instagram Sync">
-              🔄 Sync Channel
-            </button>
+            <div id="ig-auto-sync-status" style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: #10B981; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); padding: 6px 14px; border-radius: var(--radius-full); font-weight: 700;">
+              <span class="pulse-dot" style="width: 7px; height: 7px; background: #10B981;"></span>
+              <span>LIVE AUTO-SYNC: <span id="auto-sync-timer">just now</span></span>
+            </div>
             <a id="ig-visit-btn" href="https://www.instagram.com/_sndy_edits/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-orange btn-sm">
               <span>Visit @_sndy_edits</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
