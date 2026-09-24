@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VIP Creator Templates &amp; CapCut Models | SNDY EDITS (@_sndy_edits)</title>
+  <meta name="description" content="Exclusive video editor templates created by Sandy (@_sndy_edits). CapCut models, Premiere XML project files, and cinematic 3D LUTs for active subscribers." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Global Header -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <div class="logo-wrapper">
+        <a href="index.html" class="logo-mark" aria-label="SNDY EDITS Homepage">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </a>
+        <div>
+          <a href="index.html" class="logo-text">SNDY<span class="text-orange">//</span>EDITS</a>
+          <span class="logo-tag">Insta Video Editor</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu" id="primary-nav-menu" role="navigation" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="reels.html" class="nav-link">Top Reels</a>
+        <a href="pricing.html" class="nav-link">Packages &amp; Plans</a>
+        <a href="templates.html" class="nav-link active">Templates</a>
+        <a href="enquiry.html" class="nav-link">Start Enquiry</a>
+        <a href="admin.html" class="nav-link">Studio Admin</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://www.instagram.com/_sndy_edits/" target="_blank" rel="noopener noreferrer" class="ig-sync-badge" title="Live Instagram Feed: @_sndy_edits">
+          <span class="pulse-dot"></span>
+          <span id="header-handle">@_sndy_edits</span>
+        </a>
+        <a href="pricing.html" class="btn btn-primary btn-sm">Join Plans</a>
+        <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" role="main">
+    <!-- Templates Header -->
+    <section class="section" style="padding-top: 60px; padding-bottom: 20px;">
+      <div class="container text-center">
+        <span class="section-subtitle">Editor's Exclusive Vault</span>
+        <h1 class="section-title" style="font-size: 2.8rem; margin-bottom: 14px;">
+          Creator Templates &amp; CapCut Models
+        </h1>
+        <p class="section-desc" style="max-width: 700px; margin: 0 auto 28px;">
+          Sandy creates high-retention CapCut templates, XML presets, and 3D LUTs and uploads them directly to this website. Available <em>exclusively</em> to paying members of the <strong>Access to Templates Plan (₹2,000/month)</strong>.
+        </p>
+
+        <!-- Subscriber Status Banner / Passkey Gate -->
+        <div id="subscriber-status-box" style="max-width: 820px; margin: 0 auto 36px; background: rgba(13,22,43,0.9); border: 1.5px solid var(--color-navy-border); border-radius: var(--radius-md); padding: 20px 24px; text-align: left; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div id="vault-status-icon" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255, 107, 53, 0.15); border: 1px solid var(--color-orange); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+              🔒
+            </div>
+            <div>
+              <strong id="vault-status-title" style="color: #FFF; font-size: 1rem; display: block;">Vault Status: Member Protected</strong>
+              <span id="vault-status-desc" style="color: var(--text-muted); font-size: 0.85rem;">
+                Subscribe to the <strong>₹2,000/mo</strong> plan to download all templates, or enter your member passkey below.
+              </span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button id="unlock-passkey-btn" class="btn btn-secondary btn-sm" onclick="promptSubscriberUnlock()">
+              🔑 Member Passkey
+            </button>
+            <a href="https://wa.me/?text=Hi%20Sandy!%20I%20want%20to%20subscribe%20to%20the%20Access%20to%20Templates%20Plan%20(₹2,000/month)%20to%20unlock%20all%20templates%20on%20your%20website." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+              Subscribe (₹2,000/mo)
+            </a>
+          </div>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="filter-group" role="tablist" style="margin-bottom: 30px;">
+          <button class="filter-btn active" data-category="all" role="tab" aria-selected="true">All Templates (6)</button>
+          <button class="filter-btn" data-category="capcut" role="tab" aria-selected="false">CapCut Models</button>
+          <button class="filter-btn" data-category="luts" role="tab" aria-selected="false">3D LUTs &amp; Presets</button>
+          <button class="filter-btn" data-category="audio" role="tab" aria-selected="false">Sound FX</button>
+          <button class="filter-btn" data-category="overlays" role="tab" aria-selected="false">4K Film Overlays</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Templates Grid -->
+    <section class="section section-dark" style="padding-top: 10px;">
+      <div class="container">
+        <div id="assets-list-container" class="assets-grid">
+          <!-- Populated by app.js -->
+        </div>
+
+        <!-- Plan Explanation Card -->
+        <div style="margin-top: 60px; background: var(--bg-card); border: 1px solid var(--color-navy-border); border-radius: var(--radius-lg); padding: 36px; text-align: center; max-width: 820px; margin-left: auto; margin-right: auto;">
+          <span style="font-size: 0.8rem; font-weight: 700; color: #00F0FF; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 6px;">
+            ₹2,000 / month • VIP Vault
+          </span>
+          <h3 style="font-size: 1.8rem; color: #FFF; margin-bottom: 12px;">How the Templates Plan Works</h3>
+          <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+            Instead of spending hours manually keyframing speed ramps, beat shakes, and color grading, Sandy builds ready-to-use CapCut templates and Premiere XML presets calibrated for viral audios. New templates are uploaded directly to this website every week.
+          </p>
+          <a href="pricing.html" class="btn btn-primary btn-lg">Explore Plan Details &amp; Pricing</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Download & Template Modal -->
+  <div id="asset-download-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="download-modal-title">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="download-modal-title" class="modal-title">Download Template</h3>
+        <button class="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="download-modal-desc" style="color: var(--text-secondary); margin-bottom: 16px;"></p>
+        <ul id="download-modal-specs" style="list-style: none; margin-bottom: 20px;"></ul>
+        <div id="download-lock-notice" style="background: rgba(255, 107, 53, 0.1); border: 1px solid var(--color-orange); padding: 14px; border-radius: var(--radius-sm); font-size: 0.9rem; color: #FFA5C9;">
+          <strong>🔒 Templates Plan Subscription Required:</strong> This template is exclusive to paying subscribers (₹2,000/mo). If you are already subscribed, enter your member passkey or join the plan below.
+        </div>
+      </div>
+      <div class="modal-footer" id="modal-download-actions">
+        <a id="sub-cta-btn" href="https://wa.me/?text=Hi%20Sandy!%20I%20want%20to%20subscribe%20to%20the%20Access%20to%20Templates%20Plan%20(₹2,000/month)%20to%20unlock%20templates." target="_blank" class="btn btn-primary">
+          Join Templates Plan (₹2,000/mo)
+        </a>
+        <button id="confirm-download-btn" class="btn btn-primary" style="display: none;">
+          Download Template File
+        </button>
+        <button class="btn btn-secondary modal-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="container footer-bottom" style="border-top: 1px solid var(--color-navy-border); padding-top: 24px;">
+      <p style="color: var(--text-muted); font-size: 0.85rem;">
+        © 2026 SNDY EDITS • Video Editor Santhosh (Sandy) @_sndy_edits. All rights reserved.
+      </p>
+      <div style="display: flex; gap: 16px;">
+        <a href="index.html" style="color: var(--text-muted); font-size: 0.85rem;">Home</a>
+        <a href="reels.html" style="color: var(--text-muted); font-size: 0.85rem;">Reels</a>
+        <a href="pricing.html" style="color: var(--text-muted); font-size: 0.85rem;">Plans</a>
+        <a href="admin.html" style="color: var(--text-muted); font-size: 0.85rem;">Studio CMS</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    function promptSubscriberUnlock() {
+      if (AppState.isTemplateSubscriber()) {
+        if (confirm("You are currently an active subscriber! Do you want to sign out of the member vault?")) {
+          AppState.setTemplateSubscriber(false);
+          updateVaultUI();
+          showToast("Signed out of Member Vault.", "normal");
+        }
+        return;
+      }
+
+      const passkey = prompt("Enter your Member Passkey (or Demo Passkey 'VIP2026' / '1234'):");
+      if (!passkey) return;
+
+      if (passkey.trim().toUpperCase() === "VIP2026" || passkey.trim() === "1234" || passkey.trim() === "SANDY") {
+        AppState.setTemplateSubscriber(true);
+        updateVaultUI();
+        showToast("Access Granted! Member Vault unlocked.", "success");
+      } else {
+        alert("Invalid member passkey. Please subscribe to the Access to Templates Plan (₹2,000/month) to receive your passkey.");
+      }
+    }
+
+    function updateVaultUI() {
+      const isSub = AppState.isTemplateSubscriber();
+      const statusTitle = document.getElementById("vault-status-title");
+      const statusDesc = document.getElementById("vault-status-desc");
+      const statusIcon = document.getElementById("vault-status-icon");
+      const unlockBtn = document.getElementById("unlock-passkey-btn");
+      const lockNotice = document.getElementById("download-lock-notice");
+      const confirmDownloadBtn = document.getElementById("confirm-download-btn");
+      const subCtaBtn = document.getElementById("sub-cta-btn");
+
+      if (isSub) {
+        if (statusTitle) statusTitle.textContent = "Vault Status: VIP Active Subscriber";
+        if (statusDesc) statusDesc.textContent = "You have full unlocked access to all editor-created CapCut templates, XML presets, and 3D LUTs.";
+        if (statusIcon) {
+          statusIcon.textContent = "🔓";
+          statusIcon.style.borderColor = "#10B981";
+          statusIcon.style.background = "rgba(16, 185, 129, 0.15)";
+        }
+        if (unlockBtn) unlockBtn.textContent = "✓ Member Active (Logout)";
+        if (lockNotice) {
+          lockNotice.style.background = "rgba(16, 185, 129, 0.15)";
+          lockNotice.style.borderColor = "#10B981";
+          lockNotice.style.color = "#A7F3D0";
+          lockNotice.innerHTML = "<strong>✓ Subscriber Access Active:</strong> Click below to start your direct uncompressed template download.";
+        }
+        if (confirmDownloadBtn) confirmDownloadBtn.style.display = "inline-block";
+        if (subCtaBtn) subCtaBtn.style.display = "none";
+      } else {
+        if (statusTitle) statusTitle.textContent = "Vault Status: Member Protected";
+        if (statusDesc) statusDesc.textContent = "Subscribe to the ₹2,000/mo plan to download all templates, or enter your member passkey below.";
+        if (statusIcon) {
+          statusIcon.textContent = "🔒";
+          statusIcon.style.borderColor = "var(--color-orange)";
+          statusIcon.style.background = "rgba(255, 107, 53, 0.15)";
+        }
+        if (unlockBtn) unlockBtn.textContent = "🔑 Member Passkey";
+        if (lockNotice) {
+          lockNotice.style.background = "rgba(255, 107, 53, 0.1)";
+          lockNotice.style.borderColor = "var(--color-orange)";
+          lockNotice.style.color = "#FFA5C9";
+          lockNotice.innerHTML = "<strong>🔒 Templates Plan Subscription Required:</strong> This template is exclusive to paying subscribers (₹2,000/mo). If you are already subscribed, enter your member passkey or join the plan below.";
+        }
+        if (confirmDownloadBtn) confirmDownloadBtn.style.display = "none";
+        if (subCtaBtn) subCtaBtn.style.display = "inline-block";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateVaultUI();
+    });
+  </script>
+</body>
+</html>

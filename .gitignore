@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+check_cred.ps1
+scratch_*.js
+crop_reels_clean.py

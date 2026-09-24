@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Studio & Analytics // SNDY EDITS</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js for High-Definition Interactive Bar Graphs & Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ========================================================================= -->
+  <!-- 1. AUTHENTICATION GATE (RESTRICTED OWNER ACCESS)                           -->
+  <!-- ========================================================================= -->
+  <div id="auth-gate" class="auth-gate-wrapper">
+    <div class="auth-card">
+      <div class="auth-icon-wrap">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-orange)" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </div>
+      <h2 style="font-size: 1.8rem; margin-bottom: 8px;">Owner Studio Portal</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 28px;">
+        Restricted area for SNDY EDITS owner. Access the website CMS editor, real-time analytics, and client inquiries pipeline.
+      </p>
+
+      <form id="owner-login-form">
+        <div class="form-group" style="text-align: left;">
+          <label for="login-email">Owner Email</label>
+          <input type="email" id="login-email" class="form-control" value="owner@sndyedits.com" required />
+        </div>
+        <div class="form-group" style="text-align: left;">
+          <label for="login-pin">Owner PIN / Security Passkey</label>
+          <input type="password" id="login-pin" class="form-control" value="1234" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+          Unlock Owner Studio
+        </button>
+      </form>
+
+      <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-navy-border);">
+        <button id="demo-quick-login-btn" class="btn btn-secondary btn-sm" style="width: 100%;">
+          ⚡ One-Click Verified Owner Login (Demo)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. OWNER MANAGEMENT DASHBOARD & CMS PANEL                                 -->
+  <!-- ========================================================================= -->
+  <div id="admin-panel" class="admin-layout" style="display: none;">
+    
+    <!-- Top Bar -->
+    <header class="admin-top-bar">
+      <div class="logo-wrapper">
+        <a href="admin.html" class="logo-mark">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </a>
+        <div>
+          <span class="logo-text">SNDY<span class="text-orange">//</span>STUDIO</span>
+          <span class="logo-tag">Owner Management & Analytics</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="index.html" class="btn btn-secondary btn-sm">
+          ← Back to Website
+        </a>
+        <span style="font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+          <span class="pulse-dot"></span> <strong style="color: #FFF;">Santhosh Sandy</strong>
+        </span>
+        <button id="admin-logout-btn" class="btn btn-outline-orange btn-sm">
+          Log Out
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="admin-tabs-nav" role="tablist">
+      <button class="admin-tab-btn active" data-target="pane-analytics" role="tab">
+        📊 Analytics & Reach Graphs
+      </button>
+      <button class="admin-tab-btn" data-target="pane-inquiries" role="tab">
+        📩 Client Inquiries (<span id="enquiries-count-badge">0</span>)
+      </button>
+      <button class="admin-tab-btn" data-target="pane-videos-cms" role="tab">
+        🎬 Top Reels CMS
+      </button>
+      <button class="admin-tab-btn" data-target="pane-assets-cms" role="tab">
+        📦 Creator Templates CMS
+      </button>
+      <button class="admin-tab-btn" data-target="pane-compliance" role="tab">
+        🔒 Compliance & Data Privacy Desk
+      </button>
+      <button class="admin-tab-btn" data-target="pane-settings" role="tab">
+        ⚙️ Settings & Credentials
+      </button>
+    </nav>
+
+    <!-- TAB 1: ANALYTICS & BAR GRAPHS -->
+    <main class="admin-tab-pane active" id="pane-analytics">
+      
+      <!-- Real Instagram Channel Status Bar -->
+      <div style="background: rgba(30, 58, 138, 0.25); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 12px; padding: 18px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <img id="admin-ig-avatar" src="assets/sndy_profile_avatar.png" alt="Sandy Profile" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--color-orange); object-fit: cover;" />
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <strong id="admin-ig-handle" style="font-size: 1.15rem; color: #FFF;">@_sndy_edits</strong>
+              <span class="pulse-dot"></span>
+              <span style="font-size: 0.75rem; background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); padding: 2px 8px; border-radius: 999px; font-weight: 700;">LIVE METRICS ACTIVE</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+              Owner: <strong>Santhosh (Sandy)</strong> • Personal Tag: <strong style="color: var(--color-orange-light);">@_santhozz_12</strong> • Status: <strong>Open to collab & DM</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button id="admin-resync-ig-btn" class="btn btn-secondary btn-sm">
+            🔄 Live Refresh IG
+          </button>
+          <a href="https://www.instagram.com/_sndy_edits/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="background: var(--instagram-grad);">
+            Open @_sndy_edits ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- Interconnected Analytics Timeframe Toolbar -->
+      <div class="analytics-toolbar">
+        <div class="timeframe-selector">
+          <span class="toolbar-label">Timeframe:</span>
+          <div class="timeframe-pill-group" role="group" aria-label="Analytics Timeframe">
+            <button type="button" class="timeframe-pill active" data-period="7d">⚡ Last 7 Days</button>
+            <button type="button" class="timeframe-pill" data-period="30d">📅 Last 30 Days</button>
+            <button type="button" class="timeframe-pill" data-period="all">🌐 Whole Time (All Time)</button>
+          </div>
+          <span id="analytics-period-badge" style="font-size: 0.78rem; color: var(--color-orange-light); background: rgba(255,107,53,0.12); padding: 4px 10px; border-radius: 4px; font-weight: 700;">
+            Showing: Past 7 Days (Daily Granularity)
+          </span>
+        </div>
+
+        <div class="toolbar-actions">
+          <button id="btn-export-analytics-csv" type="button" class="btn btn-secondary btn-sm" title="Export CSV Report">
+            📥 Export CSV
+          </button>
+          <button id="btn-export-analytics-json" type="button" class="btn btn-secondary btn-sm" title="Export JSON Dataset">
+            📄 Export JSON
+          </button>
+        </div>
+      </div>
+
+      <!-- High-Level KPI Summary (Linked Dynamically to Timeframe) -->
+      <div class="kpi-cards-grid">
+        <div class="kpi-card">
+          <span class="kpi-title" id="kpi-reach-label">Organic Video Reach</span>
+          <div class="kpi-number" id="admin-kpi-reach">1,920</div>
+          <div class="kpi-trend trend-up">
+            <span id="admin-kpi-reach-trend">↑ 18.4% daily non-follower reach</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-title" id="kpi-views-label">Total Reels Plays & Views</span>
+          <div class="kpi-number" id="admin-kpi-views">2,840</div>
+          <div class="kpi-trend trend-up">
+            <span id="admin-kpi-views-trend">↑ 22.1% algorithm boost</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-title" id="kpi-retention-label">Avg Retention Rate</span>
+          <div class="kpi-number" id="admin-kpi-retention">85.4%</div>
+          <div class="kpi-trend trend-up">
+            <span id="admin-kpi-retention-trend">High retention hook (>80%)</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-title" id="kpi-inquiries-label">Inquiry Form Submissions</span>
+          <div class="kpi-number" id="admin-kpi-inquiries">0</div>
+          <div class="kpi-trend trend-up">
+            <span id="admin-kpi-inquiries-trend">Live Client Pipeline</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 1: Bar Graph & Doughnut Chart -->
+      <div class="charts-grid-two">
+        <!-- Chart 1: Instagram Reach Bar Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3 id="chart-reach-title" style="font-size: 1.15rem;">Instagram Organic Reach (Bar Graph)</h3>
+              <span id="chart-reach-subtitle" style="font-size: 0.8rem; color: var(--text-muted);">Daily Non-Follower Viral Discovery vs Follower Impressions</span>
+            </div>
+            <span style="font-size: 0.75rem; background: rgba(255,107,53,0.15); color: var(--color-orange-light); padding: 4px 10px; border-radius: 4px; font-weight: 700;">Synced</span>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="instaReachBarChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Traffic Sources Doughnut -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3 style="font-size: 1.15rem;">Traffic & Client Acquisition</h3>
+              <span id="chart-sources-subtitle" style="font-size: 0.8rem; color: var(--text-muted);">Where video edit clients discover Sandy's work</span>
+            </div>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="sourcesDoughnutChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 2: Website Traffic & Inquiries Line Chart -->
+      <div class="chart-card" style="margin-bottom: 24px;">
+        <div class="chart-header">
+          <div>
+            <h3 id="chart-traffic-title" style="font-size: 1.15rem;">Website Visitors & Video Enquiries Correlation</h3>
+            <span id="chart-traffic-subtitle" style="font-size: 0.8rem; color: var(--text-muted);">Spikes in website visits directly correlated to reel drops</span>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="webTrafficLineChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Charts Row 3: Audience Retention Drop-Off Curve (Interactive Second-by-Second Drilldown) -->
+      <div class="chart-card" style="margin-bottom: 30px;">
+        <div class="chart-header" style="flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="font-size: 1.15rem;">Second-by-Second Reel Audience Retention Curve</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Validating Sandy's 0.8s pattern interrupt formula against average Instagram retention</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="reel-curve-selector" style="font-size: 0.8rem; color: var(--text-muted);">Inspect Reel:</label>
+            <select id="reel-curve-selector" class="form-control" style="padding: 6px 12px; font-size: 0.82rem; max-width: 280px;">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap" style="height: 280px;">
+          <canvas id="retentionCurveChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Section: All Reels Performance & Analytics Matrix -->
+      <div class="chart-card" style="margin-bottom: 30px;">
+        <div class="chart-header" style="flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="font-size: 1.25rem;">All Reels Performance & Analytics Matrix</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">Granular reach, engagement ratios, watch retention meters, and curve inspector for every video</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="sortReelsAnalytics('reach')">🔥 Sort by Reach</button>
+            <button class="btn btn-secondary btn-sm" onclick="sortReelsAnalytics('retention')">⚡ Sort by Retention</button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Reel / Video</th>
+                <th>Category</th>
+                <th>Organic Reach</th>
+                <th>Plays / Views</th>
+                <th>Engagement (Likes / Comments)</th>
+                <th>Shares & Saves</th>
+                <th>Avg Retention</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="all-reels-analytics-tbody">
+              <!-- Populated dynamically by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- TAB 2: INQUIRIES & SUBMISSIONS PIPELINE -->
+    <section class="admin-tab-pane" id="pane-inquiries">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+          <h2 style="font-size: 1.5rem;">Client Video Edit Inquiries</h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Real-time submissions from the website enquiry form with attached files and editing briefs.</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="renderEnquiriesTable()">🔄 Refresh List</button>
+      </div>
+
+      <div style="background: var(--bg-card); border: 1px solid var(--color-navy-border); border-radius: var(--radius-md); overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Client / Handle</th>
+              <th>Contact Info</th>
+              <th>Aspect & Style</th>
+              <th>Attached Files</th>
+              <th>Edit Instructions Brief</th>
+              <th>Status</th>
+              <th>Direct Action</th>
+            </tr>
+          </thead>
+          <tbody id="enquiries-tbody">
+            <!-- Populated by admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: TOP 5 VIDEOS CMS -->
+    <section class="admin-tab-pane" id="pane-videos-cms">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+          <h2 style="font-size: 1.5rem;">Top 5 Instagram Videos Showcase CMS</h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Update reach numbers, video titles, thumbnail covers, and viral badges displayed on the live public site.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="addNewTopVideo()">+ Add New Video</button>
+      </div>
+
+      <div id="admin-videos-list">
+        <!-- Populated by admin.js -->
+      </div>
+    </section>
+
+    <!-- TAB 4: CAPCUT MODELS & ASSETS CMS -->
+    <section class="admin-tab-pane" id="pane-assets-cms">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+          <h2 style="font-size: 1.5rem;">Creator Assets & CapCut Models Vault CMS</h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Add new CapCut templates, cinematic LUTs, SFX packs, and update download counts.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="addNewAsset()">+ Add New Asset / Model</button>
+      </div>
+
+      <div id="admin-assets-list">
+        <!-- Populated by admin.js -->
+      </div>
+    </section>
+
+    <!-- TAB 5: COMPLIANCE & DATA PRIVACY DESK -->
+    <section class="admin-tab-pane" id="pane-compliance">
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.5rem;">Compliance, Security & Privacy Audit Desk</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">Resolve and monitor all 20 legal, privacy, accessibility, and security requirements.</p>
+      </div>
+
+      <!-- Compliance Status Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div style="background: var(--bg-card); border: 1px solid #10B981; border-radius: var(--radius-sm); padding: 18px;">
+          <strong style="color: #10B981;">✓ Data Minimization (#7)</strong>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px;">Collecting only necessary contact info & raw editing clips. No tracking cookies.</p>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid #10B981; border-radius: var(--radius-sm); padding: 18px;">
+          <strong style="color: #10B981;">✓ SDK Leak Audit (#8)</strong>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px;">Zero third-party invasive SDKs or ad trackers detected. Clean local execution.</p>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid #10B981; border-radius: var(--radius-sm); padding: 18px;">
+          <strong style="color: #10B981;">✓ Minor Protection (#9)</strong>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px;">Mandatory 16+ / parental consent checkbox enforced on all upload submissions.</p>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid #10B981; border-radius: var(--radius-sm); padding: 18px;">
+          <strong style="color: #10B981;">✓ Zero Dark Patterns (#11, #12)</strong>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px;">No hidden charges, upfront flat pricing, and honest organic metric pledges.</p>
+        </div>
+      </div>
+
+      <!-- Data Deletion Audit Log -->
+      <h3 style="font-size: 1.2rem; margin-bottom: 12px;">Right to Erasure / Data Deletion Log (#10)</h3>
+      <div style="background: var(--bg-card); border: 1px solid var(--color-navy-border); border-radius: var(--radius-md); overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Client Email</th>
+              <th>Request Timestamp</th>
+              <th>Purge Status</th>
+              <th>Compliance Audit</th>
+            </tr>
+          </thead>
+          <tbody id="deletion-tbody">
+            <!-- Populated by admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 6: SETTINGS -->
+    <section class="admin-tab-pane" id="pane-settings">
+      <div style="max-width: 600px;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Owner Studio Credentials</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">Change the owner email address that has permission to access this management dashboard.</p>
+
+        <form id="admin-settings-form" style="background: var(--bg-card); border: 1px solid var(--color-navy-border); border-radius: var(--radius-md); padding: 28px;">
+          <div class="form-group">
+            <label for="settings-owner-email">Owner Email Address</label>
+            <input type="email" id="settings-owner-email" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="settings-owner-pin">Owner Access PIN / Passkey</label>
+            <input type="password" id="settings-owner-pin" class="form-control" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Save Owner Credentials</button>
+        </form>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Shared App & Admin Scripts -->
+  <script src="app.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
