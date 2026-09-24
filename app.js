@@ -8,156 +8,183 @@
 const DEFAULT_TOP_VIDEOS = [
   {
     id: "reel-1",
+    rank: 1,
+    code: "DZDIbQlvGQq",
+    title: "Viral Split Frame • B&W Portrait Aesthetic Edit",
+    reach: "48.1K",
+    rawReach: 48100,
+    likes: "3,410",
+    comments: "48",
+    shares: "820",
+    saves: "540",
+    tag: "🏆 #1 All-Time Most Viral (48.1K Reach)",
+    category: "Creative Visuals",
+    aspectRatio: "9:16",
+    duration: "0:16",
+    igUrl: "https://www.instagram.com/_sndy_edits/reel/DZDIbQlvGQq/",
+    thumb: "assets/reels/reel-top1.png",
+    videoFile: "assets/reels/reel-top1.mp4",
+    techniques: "High-contrast monochrome split-frame transition, seamless picture-in-picture frame hold, atmospheric slow-motion, and cinematic bass drop audio sync."
+  },
+  {
+    id: "reel-2",
+    rank: 2,
+    code: "DaQFnasvQn8",
+    title: "Orange Ford Mustang • Supercar Drift & Velocity",
+    reach: "32.0K",
+    rawReach: 32000,
+    likes: "2,840",
+    comments: "62",
+    shares: "690",
+    saves: "410",
+    tag: "⚡ 32K Supercar Velocity Edit",
+    category: "Automotive & Drift",
+    aspectRatio: "9:16",
+    duration: "0:22",
+    igUrl: "https://www.instagram.com/_sndy_edits/reel/DaQFnasvQn8/",
+    thumb: "assets/reels/reel-top2.png",
+    videoFile: "assets/reels/reel-top2.mp4",
+    techniques: "Precision keyframe tracking on vehicle body lines, speed ramping through corner drift, dynamic camera motion blur, and turbo engine sound design."
+  },
+  {
+    id: "reel-3",
+    rank: 3,
     code: "Dcd41EgTCmj",
     title: "Viral Visual FX • \"How To Make This Effect\"",
     reach: "22.9K",
     rawReach: 22900,
     likes: "1,140",
     comments: "28",
-    shares: "240",
-    tag: "🔥 #1 Trending (22.9K Views)",
-    category: "Visual FX",
+    shares: "380",
+    saves: "490",
+    tag: "🔥 22.9K Tutorial Breakdown",
+    category: "CapCut Tutorials",
     aspectRatio: "9:16",
     duration: "0:28",
     igUrl: "https://www.instagram.com/_sndy_edits/reel/Dcd41EgTCmj/",
-    thumb: "/assets/reels/reel-1.png",
+    thumb: "assets/reels/reel-top3.png",
+    videoFile: "assets/reels/reel-top3.mp4",
     techniques: "Optical velocity tracking, 3D layer depth separation, seamless scale impact punch, and custom bass drop sound design."
   },
   {
-    id: "reel-2",
+    id: "reel-4",
+    rank: 4,
     code: "DdjbPi_zK3B",
-    title: "THALA 🥶❤️‍🔥 • Ajith Kumar Velocity Portrait Edit",
-    reach: "13.8K",
-    rawReach: 13800,
+    title: "THALAPATHY Vijay Portrait • Digital Artwork Edit",
+    reach: "15.2K",
+    rawReach: 15200,
     likes: "2,643",
     comments: "45",
-    shares: "380",
-    tag: "⚡ 2.6K+ Likes • Fan Favorite",
+    shares: "512",
+    saves: "318",
+    tag: "🎬 15.2K Fan Favorite",
     category: "Celebrity Velocity",
     aspectRatio: "9:16",
-    duration: "0:22",
+    duration: "0:21",
     igUrl: "https://www.instagram.com/_sndy_edits/reel/DdjbPi_zK3B/",
-    thumb: "/assets/reels/reel-2.png",
-    techniques: "High-velocity speed ramping, custom optical flares, dynamic speed graph curves, and cinematic Tamil dialogue punch."
+    thumb: "assets/reels/reel-top4.png",
+    videoFile: "assets/reels/reel-top4.mp4",
+    techniques: "Celebrity digital painting reveal with luminous glow outlines, speed ramping curves, and punchy dialogue beat drops."
   },
   {
-    id: "reel-3",
+    id: "reel-5",
+    rank: 5,
     code: "Dcgcc-5PKy-",
-    title: "Day 4/30 • 10K Reach Growth Strategy",
+    title: "Day 4/30 • 10K Reach Instagram Growth Strategy",
     reach: "11.4K",
     rawReach: 11400,
     likes: "429",
     comments: "18",
-    shares: "95",
-    tag: "📈 High Retention Talking Head",
+    shares: "165",
+    saves: "210",
+    tag: "📈 High Retention Strategy",
     category: "Creator Growth",
     aspectRatio: "9:16",
     duration: "0:34",
     igUrl: "https://www.instagram.com/_sndy_edits/reel/Dcgcc-5PKy-/",
-    thumb: "/assets/reels/reel-3.png",
+    thumb: "assets/reels/reel-top5.png",
+    videoFile: "assets/reels/reel-top5.mp4",
     techniques: "Talking-head retention formula, dynamic text punchlines, zoom keyframing, and interactive audio hooks."
   },
   {
-    id: "reel-4",
+    id: "reel-6",
+    rank: 6,
+    code: "DZz2DAEPfT4",
+    title: "Red Sports Car • Dynamic Lighting & Motion FX",
+    reach: "9.1K",
+    rawReach: 9100,
+    likes: "780",
+    comments: "24",
+    shares: "194",
+    saves: "160",
+    tag: "🏎️ Cinematic Speed Ramp",
+    category: "Automotive & Drift",
+    aspectRatio: "9:16",
+    duration: "0:18",
+    igUrl: "https://www.instagram.com/_sndy_edits/reel/DZz2DAEPfT4/",
+    thumb: "assets/reels/reel-top6.png",
+    videoFile: "assets/reels/reel-top6.mp4",
+    techniques: "Sleek automotive visualizer with custom neon rim flares, 3D layer depth, and speed curve ramps."
+  },
+  {
+    id: "reel-7",
+    rank: 7,
+    code: "DZ2iv_gP4Ch",
+    title: "Sports Car Wheel Rim • Cutout Mask Velocity Edit",
+    reach: "7.3K",
+    rawReach: 7300,
+    likes: "620",
+    comments: "19",
+    shares: "142",
+    saves: "135",
+    tag: "⚙️ Precision Keyframe Cut",
+    category: "Automotive & Drift",
+    aspectRatio: "9:16",
+    duration: "0:19",
+    igUrl: "https://www.instagram.com/_sndy_edits/reel/DZ2iv_gP4Ch/",
+    thumb: "assets/reels/reel-top7.png",
+    videoFile: "assets/reels/reel-top7.mp4",
+    techniques: "Precision keyframe mask tracking focusing on red wheel brake calipers and tire smoke transitions."
+  },
+  {
+    id: "reel-8",
+    rank: 8,
     code: "DaSp3ZwvZC2",
-    title: "CapCut Ripple Effect • Viral FX Tutorial",
+    title: "CapCut Ripple Effect • Viral Portrait Beat Sync",
     reach: "6.7K",
     rawReach: 6657,
     likes: "397",
     comments: "36",
     shares: "142",
-    tag: "🎬 CapCut Masterclass",
+    saves: "190",
+    tag: "🌊 Viral Water Ripple",
     category: "CapCut Tutorials",
     aspectRatio: "9:16",
     duration: "0:26",
     igUrl: "https://www.instagram.com/_sndy_edits/reel/DaSp3ZwvZC2/",
-    thumb: "/assets/reels/reel-4.png",
+    thumb: "assets/reels/reel-top8.png",
+    videoFile: "assets/reels/reel-top8.mp4",
     techniques: "CapCut displacement mapping, water ripple frequency overlay, beat-matched chromatic aberration."
   },
   {
-    id: "reel-5",
+    id: "reel-9",
+    rank: 9,
     code: "DaVOb3Gvj1b",
-    title: "CapCut Green Bike Motion Edit",
+    title: "CapCut Green Bike • Smooth Motion Velocity",
     reach: "6.0K",
     rawReach: 6027,
     likes: "395",
     comments: "28",
     shares: "110",
-    tag: "🏍️ Velocity Ramp",
-    category: "Automotive / Bike",
+    saves: "112",
+    tag: "🏍️ Speed Curve Ramp",
+    category: "Automotive & Drift",
     aspectRatio: "9:16",
     duration: "0:19",
     igUrl: "https://www.instagram.com/_sndy_edits/reel/DaVOb3Gvj1b/",
-    thumb: "/assets/reels/reel-5.png",
-    techniques: "Motion tracking camera drift, speed remapping, directional blur, and exhaust pipe sound design."
-  },
-  {
-    id: "reel-6",
-    code: "DbdlGoLv116",
-    title: "Kabaddi Sports High-Velocity Match Reel",
-    reach: "4.7K",
-    rawReach: 4722,
-    likes: "335",
-    comments: "20",
-    shares: "86",
-    tag: "🏆 Sports Velocity",
-    category: "Sports Edits",
-    aspectRatio: "9:16",
-    duration: "0:31",
-    igUrl: "https://www.instagram.com/_sndy_edits/reel/DbdlGoLv116/",
-    thumb: "/assets/reels/reel-6.png",
-    techniques: "Multi-speed ramp sync to stadium beat, slow-mo impact pause, color grade pop on team blue jerseys."
-  },
-  {
-    id: "reel-7",
-    code: "DaX1EB6vy8i",
-    title: "Bboy Dancer Beat-Sync Velocity Reel",
-    reach: "4.1K",
-    rawReach: 4121,
-    likes: "297",
-    comments: "48",
-    shares: "68",
-    tag: "⚡ Beat Synced",
-    category: "Dance & Music",
-    aspectRatio: "9:16",
-    duration: "0:20",
-    igUrl: "https://www.instagram.com/_sndy_edits/reel/DaX1EB6vy8i/",
-    thumb: "/assets/reels/reel-7.png",
-    techniques: "Audio-reactive backflip acceleration, shake impact, desaturated cinematic film look with punchy contrast."
-  },
-  {
-    id: "reel-8",
-    code: "DcWN3E9POgf",
-    title: "Hello Guys • Sandy Intro in Barcelona Jersey",
-    reach: "4.0K",
-    rawReach: 3988,
-    likes: "221",
-    comments: "20",
-    shares: "45",
-    tag: "🙋🏻‍♂️ Sandy Creator Reel",
-    category: "Creator Intro",
-    aspectRatio: "9:16",
-    duration: "0:30",
-    igUrl: "https://www.instagram.com/_sndy_edits/reel/DcWN3E9POgf/",
-    thumb: "/assets/reels/reel-8.png",
-    techniques: "Clean voiceover sound mastering, cinematic warm grade, branded subtitle animation."
-  },
-  {
-    id: "reel-9",
-    code: "Dbtl98xTz7v",
-    title: "How To Download CapCut In PC • Full Guide",
-    reach: "2.4K",
-    rawReach: 2358,
-    likes: "184",
-    comments: "15",
-    shares: "120",
-    tag: "💻 Software Tutorial",
-    category: "CapCut Tutorials",
-    aspectRatio: "9:16",
-    duration: "0:45",
-    igUrl: "https://www.instagram.com/_sndy_edits/reel/Dbtl98xTz7v/",
-    thumb: "/assets/reels/reel-9.png",
-    techniques: "Screen-recording zoom focus, kinetic cursor highlight, step-by-step installation walkthrough."
+    thumb: "assets/reels/reel-top9.png",
+    videoFile: "assets/reels/reel-top9.mp4",
+    techniques: "Two-wheeler motorcycle cinematic cut with multi-clip velocity curve transitions."
   }
 ];
 
@@ -289,10 +316,11 @@ class AppState {
   static getTopVideos() {
     const data = localStorage.getItem("sndy_top_videos");
     let videos = data ? JSON.parse(data) : DEFAULT_TOP_VIDEOS;
-    // Auto-migrate and purge old dummy data or old stock IDs from localStorage
+    // Auto-migrate and purge old dummy data, old stock IDs, or obsolete ordering
     const hasOldStock = videos.some(v => (v.id && v.id.startsWith("vid-")) || (v.thumb && v.thumb.includes("unsplash")));
     const hasDummyMillions = videos.some(v => (v.rawReach && v.rawReach > 100000) || (typeof v.reach === 'string' && v.reach.includes('M')));
-    if (hasOldStock || hasDummyMillions) {
+    const needsTopRankRefresh = !videos[0] || !videos[0].videoFile || videos[0].code !== "DZDIbQlvGQq";
+    if (hasOldStock || hasDummyMillions || needsTopRankRefresh) {
       localStorage.removeItem("sndy_top_videos");
       videos = DEFAULT_TOP_VIDEOS;
     }
@@ -463,6 +491,145 @@ function initTopVideos() {
     container.appendChild(card);
   });
 }
+
+// 1.1 In-Website Native Video Player Modal (Plays real downloaded MP4s)
+function openVideoPlayerModal(videoId) {
+  const videos = AppState.getTopVideos();
+  const video = videos.find(v => v.id === videoId || v.code === videoId) || videos[0];
+  if (!video) return;
+
+  let modal = document.getElementById("video-preview-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "video-preview-modal";
+    modal.className = "modal-backdrop";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal-window video-modal-window" style="max-width: 820px; max-height: 92vh; background: #080E1E; border: 1.5px solid var(--color-navy-border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 40px rgba(255,107,53,0.25);">
+      <div class="modal-header" style="background: rgba(10, 18, 38, 0.98); border-bottom: 1px solid var(--color-navy-border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--color-orange); letter-spacing: 0.1em; display: block;">
+            ${video.tag}
+          </span>
+          <h3 class="modal-title" style="font-size: 1.15rem; margin-top: 2px; color: #FFF; font-weight: 800;">${video.title}</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeVideoPlayerModal()" aria-label="Close modal" style="font-size: 1.6rem; line-height: 1; padding: 4px 10px; cursor: pointer; color: var(--text-muted); background: transparent; border: none;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 24px; background: #060B18; overflow-y: auto; max-height: calc(92vh - 80px);">
+        <div class="modal-video-layout" style="display: grid; grid-template-columns: minmax(250px, 300px) 1fr; gap: 24px; align-items: start;">
+          <!-- Left: Real HTML5 Video Player playing local MP4 -->
+          <div class="reel-player-box" style="position: relative; border-radius: 14px; overflow: hidden; background: #000; box-shadow: 0 16px 36px rgba(0,0,0,0.85); aspect-ratio: 9/16; max-height: 480px; display: flex; align-items: center; justify-content: center; margin: 0 auto; width: 100%;">
+            <video 
+              id="active-reel-player"
+              src="${video.videoFile}"
+              poster="${video.thumb}"
+              controls
+              autoplay
+              playsinline
+              loop
+              style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 14px;"
+            >
+              Your browser does not support HTML5 video playback.
+            </video>
+            <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); padding: 3px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; color: #FFF; display: flex; align-items: center; gap: 5px; pointer-events: none; z-index: 2;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+              IN-BROWSER STREAM
+            </div>
+          </div>
+
+          <!-- Right: Authentic Metrics & Breakdown -->
+          <div class="reel-info-box">
+            <!-- Metrics Row -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
+              <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 12px 14px;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Organic Reach</div>
+                <div style="font-size: 1.45rem; font-weight: 900; color: var(--color-orange-light);">${video.reach}</div>
+              </div>
+              <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 12px 14px;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Likes</div>
+                <div style="font-size: 1.45rem; font-weight: 900; color: #FFF;">❤️ ${video.likes}</div>
+              </div>
+              <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 10px 14px;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Shares</div>
+                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">🔄 ${video.shares}</div>
+              </div>
+              <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 10px 14px;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Saves</div>
+                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">💾 ${video.saves}</div>
+              </div>
+            </div>
+
+            <!-- Category & Duration -->
+            <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+              <span style="font-size: 0.75rem; background: rgba(255,107,53,0.15); color: var(--color-orange-light); border: 1px solid rgba(255,107,53,0.3); padding: 3px 10px; border-radius: 999px; font-weight: 700;">
+                ${video.category}
+              </span>
+              <span style="font-size: 0.75rem; background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid var(--color-navy-border); padding: 3px 10px; border-radius: 999px;">
+                ⏱️ ${video.duration} duration
+              </span>
+              <span style="font-size: 0.75rem; background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid var(--color-navy-border); padding: 3px 10px; border-radius: 999px;">
+                📱 9:16 Vertical
+              </span>
+            </div>
+
+            <!-- Technique Breakdown -->
+            <h4 style="font-size: 0.95rem; color: #FFF; margin: 0 0 6px; font-weight: 700;">Retention &amp; Editing Breakdown:</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 20px;">
+              ${video.techniques}
+            </p>
+
+            <!-- Action buttons inside modal -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <a href="enquiry.html?service=pro&reel=${encodeURIComponent(video.title)}" class="btn btn-primary btn-sm" style="text-align: center; justify-content: center; width: 100%; padding: 10px 16px; font-weight: 700;">
+                <span>Order Reel in This Style (₹5,000/mo Sndy Pro)</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </a>
+              <a href="${video.igUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="text-align: center; justify-content: center; width: 100%; padding: 8px 16px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <span>View Original Post on Instagram</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+
+  // Backdrop click closes modal
+  modal.onclick = (e) => {
+    if (e.target === modal) closeVideoPlayerModal();
+  };
+}
+
+function closeVideoPlayerModal() {
+  const modal = document.getElementById("video-preview-modal");
+  if (modal) {
+    const player = modal.querySelector("video");
+    if (player) {
+      player.pause();
+      player.removeAttribute("src");
+      player.load();
+    }
+    modal.classList.remove("active");
+  }
+  document.body.style.overflow = "";
+}
+
+// Make accessible on window object
+window.openVideoPlayerModal = openVideoPlayerModal;
+window.closeVideoPlayerModal = closeVideoPlayerModal;
+
+// Global Escape listener for video modal
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeVideoPlayerModal();
+});
 
 // 2. Initialize Creator Assets & CapCut Models with Filtering
 function initCreatorAssets() {

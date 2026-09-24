@@ -155,7 +155,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Static File Serving
+  // Static File Serving with HTTP Range support for video streaming
   let reqPath = decodeURI(pathname);
   if (reqPath === '/') reqPath = '/index.html';
 
@@ -163,7 +163,7 @@ const server = http.createServer(async (req, res) => {
   const ext = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-  fs.readFile(filePath, (err, content) => {
+  fs.stat(filePath, (err, stats) => {
     if (err) {
       if (err.code === 'ENOENT') {
         res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -172,10 +172,39 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
         res.end('500 Server Error');
       }
-    } else {
-      res.writeHead(200, { 'Content-Type': contentType });
-      res.end(content);
+      return;
     }
+
+    if (stats.isDirectory()) {
+      res.writeHead(403);
+      res.end('Directory listing forbidden');
+      return;
+    }
+
+    // Support HTTP Range requests for video/audio streaming
+    const range = req.headers.range;
+    if (range && (ext === '.mp4' || ext === '.mp3')) {
+      const parts = range.replace(/bytes=/, "").split("-");
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+      const chunksize = (end - start) + 1;
+      const file = fs.createReadStream(filePath, { start, end });
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': contentType,
+      });
+      file.pipe(res);
+      return;
+    }
+
+    res.writeHead(200, {
+      'Content-Length': stats.size,
+      'Content-Type': contentType,
+      'Accept-Ranges': 'bytes'
+    });
+    fs.createReadStream(filePath).pipe(res);
   });
 });
 
