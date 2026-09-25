@@ -294,29 +294,49 @@
       </div>
     </section>
 
-    <!-- Creator Toolkit & Free CapCut Models -->
+    <!-- VIP Creator Toolkit & CapCut Models (Locked / Subscriber Only) -->
     <section id="creator-assets" class="section" aria-labelledby="assets-heading">
       <div class="container">
         <div class="section-header">
-          <span class="section-subtitle">Creator Downloads</span>
-          <h2 id="assets-heading" class="section-title">CapCut Latest Models & Asset Vault</h2>
+          <span class="section-subtitle">VIP Member Vault</span>
+          <h2 id="assets-heading" class="section-title">Creator Templates &amp; CapCut Models</h2>
           <p class="section-desc">
-            Directly access my personal CapCut viral editing models, Premiere/After Effects presets, cinematic LUTs, and studio sound effects. 100% free and royalty-free.
+            Sandy creates high-retention CapCut templates, Premiere XML presets, and 3D LUTs. Exclusive to active subscribers of the <strong>Access to Templates Plan (₹2,000/month)</strong>.
           </p>
         </div>
 
-        <!-- Filter Bar -->
-        <div class="assets-filter-bar" role="tablist" aria-label="Asset Categories">
-          <button class="filter-btn active" data-category="all" role="tab" aria-selected="true">All Resources</button>
-          <button class="filter-btn" data-category="capcut" role="tab" aria-selected="false">CapCut Models</button>
-          <button class="filter-btn" data-category="luts" role="tab" aria-selected="false">Cinematic LUTs</button>
-          <button class="filter-btn" data-category="audio" role="tab" aria-selected="false">Sound Design (SFX)</button>
-          <button class="filter-btn" data-category="overlays" role="tab" aria-selected="false">4K Film Overlays</button>
+        <div class="vault-stage-wrapper">
+          <!-- Floating Frosted Glass Lock Shield for Homepage Teaser -->
+          <div id="vault-lock-overlay-home" class="vault-lock-overlay">
+            <div class="vault-lock-card">
+              <div class="lock-shield-badge">🔒</div>
+              <span class="vault-tier-tag">VIP Subscribers Only</span>
+              <h2 class="vault-lock-title">VIP Templates Vault is Locked</h2>
+              <p class="vault-lock-message">
+                Join the <strong>Access to Templates Plan (₹2,000/mo)</strong> to unlock and download all editor-crafted CapCut models, Premiere XML projects, and 3D LUTs.
+              </p>
+              <div class="vault-lock-buttons">
+                <a href="templates.html" class="btn btn-secondary">
+                  🔑 Unlock Vault / Enter Passkey
+                </a>
+                <a href="pricing.html" class="btn btn-primary">
+                  Join Templates Plan (₹2,000/mo)
+                </a>
+              </div>
+              <span class="vault-lock-footnote">Templates are locked and blurred for non-subscribers.</span>
+            </div>
+          </div>
+
+          <!-- Blurred Teaser Assets -->
+          <div id="assets-list-container" class="assets-grid is-locked">
+            <!-- Populated by app.js -->
+          </div>
         </div>
 
-        <!-- Assets List Container -->
-        <div id="assets-list-container" class="assets-grid">
-          <!-- Populated by app.js -->
+        <div style="text-align: center; margin-top: 36px;">
+          <a href="templates.html" class="btn btn-outline-orange">
+            Open Full VIP Templates Vault →
+          </a>
         </div>
       </div>
     </section>

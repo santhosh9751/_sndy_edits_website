@@ -98,8 +98,31 @@
     <!-- Templates Grid -->
     <section class="section section-dark" style="padding-top: 10px;">
       <div class="container">
-        <div id="assets-list-container" class="assets-grid">
-          <!-- Populated by app.js -->
+        <div class="vault-stage-wrapper">
+          <!-- Frosted Glass Lock Shield for Non-Subscribers -->
+          <div id="vault-lock-overlay" class="vault-lock-overlay" style="display: none;">
+            <div class="vault-lock-card">
+              <div class="lock-shield-badge">🔒</div>
+              <span class="vault-tier-tag">VIP Subscribers Only</span>
+              <h2 class="vault-lock-title">VIP Creator Templates Vault is Locked</h2>
+              <p class="vault-lock-message">
+                These exclusive CapCut models, Premiere XML project files, 3D LUTs, and studio sound packs are created and uploaded by Sandy strictly for active subscribers of the <strong>Access to Templates Plan (₹2,000/month)</strong>.
+              </p>
+              <div class="vault-lock-buttons">
+                <button class="btn btn-secondary" onclick="openPasskeyModal()">
+                  🔑 Enter Member Passkey
+                </button>
+                <a href="https://wa.me/?text=Hi%20Sandy!%20I%20want%20to%20subscribe%20to%20the%20Access%20to%20Templates%20Plan%20(₹2,000/month)%20to%20unlock%20all%20templates%20on%20your%20website." target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                  Subscribe to Plan (₹2,000/mo)
+                </a>
+              </div>
+              <span class="vault-lock-footnote">Already a paying member? Enter your secret passkey to unblur and unlock instant access.</span>
+            </div>
+          </div>
+
+          <div id="assets-list-container" class="assets-grid is-locked">
+            <!-- Populated by app.js -->
+          </div>
         </div>
 
         <!-- Plan Explanation Card -->
@@ -116,6 +139,35 @@
       </div>
     </section>
   </main>
+
+  <!-- Member Passkey Modal -->
+  <div id="passkey-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="passkey-modal-title">
+    <div class="modal-window" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 id="passkey-modal-title" class="modal-title">🔑 Enter Member Passkey</h3>
+        <button class="modal-close-btn" onclick="closePasskeyModal()" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); margin-bottom: 18px; font-size: 0.95rem; line-height: 1.5;">
+          Enter your secret subscriber passkey provided upon joining the <strong>Access to Templates Plan (₹2,000/mo)</strong> to instantly unblur and unlock all template downloads.
+        </p>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label for="member-passkey-input" class="form-label">Subscriber Passkey</label>
+          <input type="text" id="member-passkey-input" class="form-input" placeholder="Enter passkey (e.g. VIP2026 or 1234)" autocomplete="off" onkeydown="if(event.key === 'Enter') verifyMemberPasskey()" />
+        </div>
+        <div id="passkey-error-msg" style="display: none; color: #EF4444; font-size: 0.85rem; margin-top: 6px; padding: 10px 14px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px;"></div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <a href="https://wa.me/?text=Hi%20Sandy!%20I%20want%20to%20subscribe%20to%20the%20Access%20to%20Templates%20Plan%20(₹2,000/month)%20to%20get%20my%20member%20passkey." target="_blank" class="btn btn-ghost btn-sm" style="color: var(--color-orange-light); padding-left: 0;">
+          Get Passkey (₹2,000/mo)
+        </a>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary btn-sm" onclick="closePasskeyModal()">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="verifyMemberPasskey()">Unlock Vault</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Download & Template Modal -->
   <div id="asset-download-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="download-modal-title">
@@ -159,26 +211,60 @@
 
   <script src="app.js"></script>
   <script>
-    function promptSubscriberUnlock() {
+    function openPasskeyModal() {
       if (AppState.isTemplateSubscriber()) {
         if (confirm("You are currently an active subscriber! Do you want to sign out of the member vault?")) {
           AppState.setTemplateSubscriber(false);
           updateVaultUI();
-          showToast("Signed out of Member Vault.", "normal");
+          if (typeof initCreatorAssets === "function") initCreatorAssets();
+          showToast("Signed out. Templates are now locked and blurred.", "normal");
+        }
+        return;
+      }
+      const modal = document.getElementById("passkey-modal");
+      const input = document.getElementById("member-passkey-input");
+      const errorMsg = document.getElementById("passkey-error-msg");
+      if (errorMsg) errorMsg.style.display = "none";
+      if (input) input.value = "";
+      if (modal) modal.classList.add("visible");
+      setTimeout(() => input && input.focus(), 150);
+    }
+
+    function closePasskeyModal() {
+      const modal = document.getElementById("passkey-modal");
+      if (modal) modal.classList.remove("visible");
+    }
+
+    function verifyMemberPasskey() {
+      const input = document.getElementById("member-passkey-input");
+      const errorMsg = document.getElementById("passkey-error-msg");
+      const passkey = input ? input.value.trim() : "";
+
+      if (!passkey) {
+        if (errorMsg) {
+          errorMsg.textContent = "Please enter your subscriber passkey.";
+          errorMsg.style.display = "block";
         }
         return;
       }
 
-      const passkey = prompt("Enter your Member Passkey (or Demo Passkey 'VIP2026' / '1234'):");
-      if (!passkey) return;
-
-      if (passkey.trim().toUpperCase() === "VIP2026" || passkey.trim() === "1234" || passkey.trim() === "SANDY") {
+      const validKeys = ["VIP2026", "1234", "SANDY", "SNDY2026", "TEMPLATES2026"];
+      if (validKeys.includes(passkey.toUpperCase()) || passkey === "1234") {
         AppState.setTemplateSubscriber(true);
+        closePasskeyModal();
         updateVaultUI();
-        showToast("Access Granted! Member Vault unlocked.", "success");
+        if (typeof initCreatorAssets === "function") initCreatorAssets();
+        showToast("Access Granted! VIP Templates Vault unlocked and unblurred.", "success");
       } else {
-        alert("Invalid member passkey. Please subscribe to the Access to Templates Plan (₹2,000/month) to receive your passkey.");
+        if (errorMsg) {
+          errorMsg.textContent = "Invalid passkey. Please subscribe to the Access to Templates Plan (₹2,000/mo) to receive your passkey.";
+          errorMsg.style.display = "block";
+        }
       }
+    }
+
+    function promptSubscriberUnlock() {
+      openPasskeyModal();
     }
 
     function updateVaultUI() {
@@ -187,6 +273,8 @@
       const statusDesc = document.getElementById("vault-status-desc");
       const statusIcon = document.getElementById("vault-status-icon");
       const unlockBtn = document.getElementById("unlock-passkey-btn");
+      const lockOverlay = document.getElementById("vault-lock-overlay");
+      const assetsContainer = document.getElementById("assets-list-container");
       const lockNotice = document.getElementById("download-lock-notice");
       const confirmDownloadBtn = document.getElementById("confirm-download-btn");
       const subCtaBtn = document.getElementById("sub-cta-btn");
@@ -200,33 +288,43 @@
           statusIcon.style.background = "rgba(16, 185, 129, 0.15)";
         }
         if (unlockBtn) unlockBtn.textContent = "✓ Member Active (Logout)";
+        if (lockOverlay) lockOverlay.style.display = "none";
+        if (assetsContainer) assetsContainer.classList.remove("is-locked");
         if (lockNotice) {
           lockNotice.style.background = "rgba(16, 185, 129, 0.15)";
           lockNotice.style.borderColor = "#10B981";
           lockNotice.style.color = "#A7F3D0";
-          lockNotice.innerHTML = "<strong>✓ Subscriber Access Active:</strong> Click below to start your direct uncompressed template download.";
+          lockNotice.innerHTML = "<strong>✓ Subscriber Access Active:</strong> Direct uncompressed project file ready for download.";
         }
         if (confirmDownloadBtn) confirmDownloadBtn.style.display = "inline-block";
         if (subCtaBtn) subCtaBtn.style.display = "none";
       } else {
         if (statusTitle) statusTitle.textContent = "Vault Status: Member Protected";
-        if (statusDesc) statusDesc.textContent = "Subscribe to the ₹2,000/mo plan to download all templates, or enter your member passkey below.";
+        if (statusDesc) statusDesc.textContent = "Subscribe to the ₹2,000/mo plan to unlock and download all templates, or enter your member passkey.";
         if (statusIcon) {
           statusIcon.textContent = "🔒";
           statusIcon.style.borderColor = "var(--color-orange)";
           statusIcon.style.background = "rgba(255, 107, 53, 0.15)";
         }
         if (unlockBtn) unlockBtn.textContent = "🔑 Member Passkey";
+        if (lockOverlay) lockOverlay.style.display = "flex";
+        if (assetsContainer) assetsContainer.classList.add("is-locked");
         if (lockNotice) {
           lockNotice.style.background = "rgba(255, 107, 53, 0.1)";
           lockNotice.style.borderColor = "var(--color-orange)";
           lockNotice.style.color = "#FFA5C9";
-          lockNotice.innerHTML = "<strong>🔒 Templates Plan Subscription Required:</strong> This template is exclusive to paying subscribers (₹2,000/mo). If you are already subscribed, enter your member passkey or join the plan below.";
+          lockNotice.innerHTML = "<strong>🔒 Templates Plan Subscription Required:</strong> This template is exclusive to paying subscribers (₹2,000/mo). Enter your member passkey or join the plan.";
         }
         if (confirmDownloadBtn) confirmDownloadBtn.style.display = "none";
         if (subCtaBtn) subCtaBtn.style.display = "inline-block";
       }
     }
+
+    // Attach to global window
+    window.promptSubscriberUnlock = promptSubscriberUnlock;
+    window.openPasskeyModal = openPasskeyModal;
+    window.closePasskeyModal = closePasskeyModal;
+    window.verifyMemberPasskey = verifyMemberPasskey;
 
     document.addEventListener("DOMContentLoaded", () => {
       updateVaultUI();

@@ -1155,6 +1155,127 @@ a {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Vault Locking & Blurring for Templates */
+.vault-stage-wrapper {
+  position: relative;
+  min-height: 420px;
+}
+
+.assets-grid.is-locked {
+  filter: blur(14px);
+  -webkit-filter: blur(14px);
+  opacity: 0.35;
+  pointer-events: none;
+  user-select: none;
+  transition: filter 0.5s ease, opacity 0.5s ease;
+}
+
+.assets-grid {
+  transition: filter 0.5s ease, opacity 0.5s ease;
+}
+
+.asset-card.is-locked {
+  cursor: not-allowed;
+  position: relative;
+  overflow: hidden;
+}
+
+.asset-card.is-locked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 17, 34, 0.35);
+  pointer-events: none;
+}
+
+.vault-lock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: auto;
+}
+
+.vault-lock-card {
+  background: rgba(13, 22, 43, 0.94);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(255, 107, 53, 0.6);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 107, 53, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 44px 36px;
+  text-align: center;
+  max-width: 620px;
+  width: 100%;
+  animation: vaultPulseGlow 3s infinite ease-in-out;
+}
+
+@keyframes vaultPulseGlow {
+  0%, 100% {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 107, 53, 0.2);
+    border-color: rgba(255, 107, 53, 0.6);
+  }
+  50% {
+    box-shadow: 0 24px 75px rgba(0, 0, 0, 0.9), 0 0 50px rgba(255, 107, 53, 0.4);
+    border-color: rgba(255, 107, 53, 0.95);
+  }
+}
+
+.lock-shield-badge {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(0, 240, 255, 0.15));
+  border: 2px solid var(--color-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 0 24px rgba(255, 107, 53, 0.35);
+}
+
+.vault-tier-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #00F0FF;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+
+.vault-lock-title {
+  font-size: 1.85rem;
+  color: #FFFFFF;
+  margin-bottom: 12px;
+  font-family: var(--font-heading);
+}
+
+.vault-lock-message {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.vault-lock-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.vault-lock-footnote {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 /* Pricing Grid */
 .pricing-grid {
   display: grid;

@@ -657,7 +657,15 @@ function initCreatorAssets() {
 
 function renderAssets(assets) {
   const container = document.getElementById("assets-list-container");
+  if (!container) return;
   container.innerHTML = "";
+
+  const isSub = AppState.isTemplateSubscriber();
+  if (!isSub) {
+    container.classList.add("is-locked");
+  } else {
+    container.classList.remove("is-locked");
+  }
 
   if (assets.length === 0) {
     container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No assets found in this category.</p>`;
@@ -666,9 +674,22 @@ function renderAssets(assets) {
 
   assets.forEach(asset => {
     const card = document.createElement("div");
-    card.className = "asset-card";
+    card.className = `asset-card ${!isSub ? "is-locked" : ""}`;
+    
+    const actionBtn = isSub
+      ? `<button class="btn btn-outline-orange btn-sm" onclick="openDownloadModal('${asset.id}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download Template
+        </button>`
+      : `<button class="btn btn-secondary btn-sm" style="width: 100%; opacity: 0.85;" onclick="promptSubscriberUnlock()">
+          🔒 Locked (₹2,000/mo Sub Required)
+        </button>`;
+
     card.innerHTML = `
-      <span class="asset-badge">${asset.badge}</span>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+        <span class="asset-badge">${asset.badge}</span>
+        ${!isSub ? `<span style="font-size: 0.72rem; font-weight: 700; color: var(--color-orange); background: rgba(255,107,53,0.15); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(255,107,53,0.3);">🔒 VIP LOCKED</span>` : `<span style="font-size: 0.72rem; font-weight: 700; color: #10B981; background: rgba(16,185,129,0.15); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.3);">✓ UNLOCKED</span>`}
+      </div>
       <h3 class="asset-name">${asset.name}</h3>
       <p class="asset-desc">${asset.description}</p>
       <div class="asset-meta">
@@ -676,11 +697,18 @@ function renderAssets(assets) {
         <span>⬇️ ${asset.downloads} dl</span>
         <span>🏷️ ${asset.version}</span>
       </div>
-      <button class="btn btn-outline-orange btn-sm" onclick="openDownloadModal('${asset.id}')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        Download / Open Template
-      </button>
+      ${actionBtn}
     `;
+
+    if (!isSub) {
+      card.addEventListener("click", (e) => {
+        // If clicking on a locked card, trigger passkey unlock
+        if (!e.target.closest("button")) {
+          if (typeof promptSubscriberUnlock === "function") promptSubscriberUnlock();
+        }
+      });
+    }
+
     container.appendChild(card);
   });
 }
@@ -1090,27 +1118,40 @@ function initMobileNav() {
 
 
 
-// Asset Download Modal (Zero Dark Patterns #11, No Hidden Fees #12)
+// Asset Download Modal - Exclusive to ₹2,000/mo Templates Plan Subscribers
 function openDownloadModal(assetId) {
+  if (!AppState.isTemplateSubscriber()) {
+    showToast("Access Denied: You must be subscribed to the Access to Templates Plan (₹2,000/mo) to download templates.", "error");
+    if (typeof promptSubscriberUnlock === "function") {
+      promptSubscriberUnlock();
+    } else {
+      window.location.href = "templates.html";
+    }
+    return;
+  }
+
   const assets = AppState.getCreatorAssets();
   const asset = assets.find(a => a.id === assetId);
   if (!asset) return;
 
   const modal = document.getElementById("asset-download-modal");
+  if (!modal) return;
   document.getElementById("download-modal-title").textContent = asset.name;
   document.getElementById("download-modal-desc").textContent = asset.description;
   document.getElementById("download-modal-specs").innerHTML = `
     <li><strong>Format:</strong> ${asset.format}</li>
     <li><strong>Version:</strong> ${asset.version}</li>
-    <li><strong>License:</strong> Free for Commercial & Personal Edits (100% Royalty Free)</li>
-    <li><strong>Zero Dark Patterns:</strong> No forced subscription, no hidden charge, instant direct download.</li>
+    <li><strong>Tier:</strong> Access to Templates Plan (₹2,000/mo) Active VIP Subscriber</li>
+    <li><strong>License:</strong> 100% Commercial & Client Rights Included</li>
   `;
 
   const confirmBtn = document.getElementById("confirm-download-btn");
-  confirmBtn.onclick = () => {
-    showToast(`Downloading ${asset.name}... Thank you for using creator assets!`, "success");
-    closeAllModals();
-  };
+  if (confirmBtn) {
+    confirmBtn.onclick = () => {
+      showToast(`Downloading uncompressed template package for ${asset.name}...`, "success");
+      closeAllModals();
+    };
+  }
 
   openModal("asset-download-modal");
 }
