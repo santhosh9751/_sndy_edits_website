@@ -904,21 +904,52 @@ function submitEnquiry() {
       id: "enq-" + Date.now(),
       timestamp: new Date().toISOString(),
       status: "New",
+      targetEmail: "senthilmurugansanthos@gmail.com",
       ...data
     };
     AppState.saveEnquiry(enquiry);
+
+    // Send to local backend API
+    fetch('/api/enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(enquiry)
+    }).catch(err => console.warn('Local enquiry API notification:', err));
+
+    // Send to FormSubmit for direct inbox delivery to senthilmurugansanthos@gmail.com
+    fetch('https://formsubmit.co/ajax/senthilmurugansanthos@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        _subject: `New Video Edit Enquiry: ${enquiry.editingStyle || 'Custom'} - ${enquiry.clientName || 'Client'}`,
+        _template: 'table',
+        "Client Name": enquiry.clientName,
+        "Email": enquiry.clientEmail,
+        "WhatsApp": enquiry.clientPhone,
+        "Aspect Ratio": enquiry.aspectRatio,
+        "Style": enquiry.editingStyle,
+        "Turnaround": enquiry.turnaround,
+        "Files": `${enquiry.filesCount} file(s) ${enquiry.fileNames}`,
+        "Brief": enquiry.instructions,
+        "Sent To": "senthilmurugansanthos@gmail.com"
+      })
+    }).catch(err => console.warn('FormSubmit AJAX notification:', err));
 
     submitBtn.disabled = false;
     submitBtn.innerHTML = originalText;
 
     // Reset Form
-    document.getElementById("video-enquiry-form").reset();
+    const vForm = document.getElementById("video-enquiry-form");
+    if (vForm) vForm.reset();
     selectedProjectFiles = [];
     updateFilesPreviewList();
 
     // Show Confirmation Modal
     openModal("enquiry-success-modal");
-  }, 1200);
+  }, 1000);
 }
 
 function generateWhatsAppDirect() {
@@ -936,7 +967,7 @@ function generateWhatsAppDirect() {
   message += `📁 *Files to Edit:* ${data.filesCount} file(s) ${data.fileNames ? `(${data.fileNames})` : ""}\n`;
   message += `📝 *Edit Brief:* ${data.instructions || "Looking for viral editing package and quote."}\n`;
   message += `━━━━━━━━━━━━━━━━━━━━━\n`;
-  message += `_Sent via sndyedits.com website enquiry portal_`;
+  message += `_Sent via sndyedits.com to senthilmurugansanthos@gmail.com_`;
 
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
@@ -944,7 +975,7 @@ function generateWhatsAppDirect() {
 
 function generateMailDirect() {
   const data = collectFormData();
-  const recipient = "hello@sndyedits.com";
+  const recipient = "senthilmurugansanthos@gmail.com";
   const subject = `[Video Edit Enquiry] ${data.editingStyle} - ${data.clientName || "New Project"}`;
   
   let body = `Hi Sandy,\n\nI would like to inquire about a video edit project.\n\n`;

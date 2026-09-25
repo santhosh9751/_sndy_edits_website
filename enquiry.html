@@ -65,17 +65,39 @@
     <!-- Form & File Upload Area -->
     <section class="section section-dark" style="padding-top: 10px;">
       <div class="container">
+        <!-- Destination Direct Mail Notice -->
+        <div style="max-width: 860px; margin: 0 auto 20px; background: rgba(13, 22, 43, 0.92); border: 1.5px solid var(--color-navy-border); border-radius: var(--radius-md); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(255, 107, 53, 0.15); border: 1px solid var(--color-orange); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+              ✉️
+            </div>
+            <div>
+              <strong style="color: #FFF; font-size: 0.98rem; display: block;">Direct Editor Inbox: senthilmurugansanthos@gmail.com</strong>
+              <span style="color: var(--text-muted); font-size: 0.84rem;">Enquiries are transmitted instantly to Sandy's personal inbox for priority response.</span>
+            </div>
+          </div>
+          <a href="mailto:senthilmurugansanthos@gmail.com?subject=Video%20Edit%20Enquiry%20-%20SNDY%20EDITS" class="btn btn-outline-orange btn-sm">
+            <span>Direct Email App</span>
+          </a>
+        </div>
+
         <div class="enquiry-card" style="max-width: 860px; margin: 0 auto;">
-          <form id="project-enquiry-form">
+          <form id="project-enquiry-form" action="https://formsubmit.co/senthilmurugansanthos@gmail.com" method="POST">
+            <!-- FormSubmit Meta Configuration -->
+            <input type="hidden" name="_subject" value="New Video Edit Enquiry - SNDY EDITS">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_destination" value="senthilmurugansanthos@gmail.com">
+
             <!-- Row 1 -->
             <div class="form-row">
               <div class="form-group">
                 <label for="client-name" class="form-label">Your Name / Creator Handle *</label>
-                <input type="text" id="client-name" class="form-control" placeholder="e.g. Alex Rivera (@alex_creates)" required />
+                <input type="text" id="client-name" name="name" class="form-control" placeholder="e.g. Alex Rivera (@alex_creates)" required />
               </div>
               <div class="form-group">
                 <label for="client-email" class="form-label">Email Address *</label>
-                <input type="email" id="client-email" class="form-control" placeholder="alex@gmail.com" required />
+                <input type="email" id="client-email" name="email" class="form-control" placeholder="alex@gmail.com" required />
               </div>
             </div>
 
@@ -83,11 +105,11 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="client-whatsapp" class="form-label">WhatsApp Number (with country code) *</label>
-                <input type="tel" id="client-whatsapp" class="form-control" placeholder="+91 98765 43210" required />
+                <input type="tel" id="client-whatsapp" name="whatsapp" class="form-control" placeholder="+91 98765 43210" required />
               </div>
               <div class="form-group">
                 <label for="project-package" class="form-label">Select Package or Plan *</label>
-                <select id="project-package" class="form-control" required>
+                <select id="project-package" name="package" class="form-control" required>
                   <option value="sndy-pro">Sndy Pro — ₹5,000/month (Reels Upload &amp; Management)</option>
                   <option value="templates-plan">Access to Templates Plan — ₹2,000/month (Exclusive Vault)</option>
                   <option value="single-reel">Custom Single Viral Reel</option>
@@ -100,7 +122,7 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="video-aspect-ratio" class="form-label">Primary Aspect Ratio</label>
-                <select id="video-aspect-ratio" class="form-control">
+                <select id="video-aspect-ratio" name="aspect_ratio" class="form-control">
                   <option value="9:16">9:16 (Instagram Reels / TikTok / YouTube Shorts)</option>
                   <option value="16:9">16:9 (Horizontal / Long Form)</option>
                   <option value="1:1">1:1 (Square Feed)</option>
@@ -108,7 +130,7 @@
               </div>
               <div class="form-group">
                 <label for="project-turnaround" class="form-label">Preferred Delivery Timeline</label>
-                <select id="project-turnaround" class="form-control">
+                <select id="project-turnaround" name="turnaround" class="form-control">
                   <option value="24h">24 Hours (Urgent)</option>
                   <option value="48h" selected>48 Hours (Standard)</option>
                   <option value="monthly">Ongoing Monthly Cadence</option>
@@ -142,13 +164,13 @@
             <!-- Drive Link / Instructions -->
             <div class="form-group">
               <label for="project-notes" class="form-label">Project Vision, Google Drive Link &amp; Reference Reel URLs</label>
-              <textarea id="project-notes" class="form-control" rows="4" placeholder="Paste your Google Drive / WeTransfer link here, describe your editing style, preferred songs, and reference reel links..."></textarea>
+              <textarea id="project-notes" name="notes" class="form-control" rows="4" placeholder="Paste your Google Drive / WeTransfer link here, describe your editing style, preferred songs, and reference reel links..."></textarea>
             </div>
 
             <!-- Submit CTA Buttons -->
             <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 24px;">
-              <button type="submit" class="btn btn-primary btn-lg" style="flex: 2;">
-                <span>Submit Video Enquiry &amp; Brief</span>
+              <button type="submit" id="enquiry-submit-btn" class="btn btn-primary btn-lg" style="flex: 2;">
+                <span>Submit Video Enquiry to Sandy</span>
               </button>
               <button type="button" id="whatsapp-quick-submit" class="btn btn-secondary btn-lg" style="flex: 1; background: #25D366; color: #000; border: none; font-weight: 700;">
                 <span>Chat on WhatsApp</span>
@@ -160,11 +182,30 @@
     </section>
   </main>
 
+  <!-- Enquiry Confirmation Modal -->
+  <div id="enquiry-success-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-window" style="text-align: center; max-width: 520px;">
+      <div class="modal-body" style="padding: 36px 28px;">
+        <div style="font-size: 3.2rem; margin-bottom: 14px;">🎉</div>
+        <h3 style="font-size: 1.8rem; margin-bottom: 12px; color: #FFF;">Enquiry Sent to Sandy!</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6;">
+          Your project brief has been routed directly to <strong style="color: var(--color-orange-light);">senthilmurugansanthos@gmail.com</strong>. Sandy reviews all incoming projects personally and will get back to you via Email and WhatsApp within <strong>1 to 2 hours</strong>!
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="closeAllModals()">Awesome, Done</button>
+          <a id="success-wa-link" href="https://wa.me/?text=Hi%20Sandy!%20I%20just%20submitted%20my%20video%20enquiry%20on%20your%20website." target="_blank" class="btn btn-secondary">
+            Follow Up on WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Global Footer -->
   <footer class="site-footer">
     <div class="container footer-bottom" style="border-top: 1px solid var(--color-navy-border); padding-top: 24px;">
       <p style="color: var(--text-muted); font-size: 0.85rem;">
-        © 2026 SNDY EDITS • Video Editor Santhosh (Sandy) @_sndy_edits. All rights reserved.
+        © 2026 SNDY EDITS • Video Editor Santhosh (Sandy) @_sndy_edits. Contact: <a href="mailto:senthilmurugansanthos@gmail.com" style="color: var(--color-orange-light);">senthilmurugansanthos@gmail.com</a>
       </p>
       <div style="display: flex; gap: 16px;">
         <a href="index.html" style="color: var(--text-muted); font-size: 0.85rem;">Home</a>
@@ -177,8 +218,10 @@
 
   <script src="app.js"></script>
   <script>
-    // Prefill plan if passed via URL parameter ?plan=sndy-pro
+    let attachedFiles = [];
+
     document.addEventListener("DOMContentLoaded", () => {
+      // Prefill plan if passed via URL parameter ?plan=sndy-pro
       const urlParams = new URLSearchParams(window.location.search);
       const plan = urlParams.get('plan');
       if (plan) {
@@ -186,6 +229,150 @@
         if (select) select.value = plan;
       }
 
+      // Dropzone and file input handling
+      const fileInput = document.getElementById("file-input");
+      const dropZone = document.getElementById("drop-zone");
+      const fileListPreview = document.getElementById("file-list-preview");
+
+      if (fileInput) {
+        fileInput.addEventListener("change", (e) => {
+          handleFiles(e.target.files);
+        });
+      }
+
+      if (dropZone) {
+        ['dragenter', 'dragover'].forEach(name => {
+          dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--color-orange)"; });
+        });
+        ['dragleave', 'drop'].forEach(name => {
+          dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--color-navy-border)"; });
+        });
+        dropZone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          handleFiles(e.dataTransfer.files);
+        });
+      }
+
+      function handleFiles(files) {
+        for (let i = 0; i < files.length; i++) {
+          attachedFiles.push(files[i]);
+        }
+        renderFilePreview();
+      }
+
+      function renderFilePreview() {
+        if (!fileListPreview) return;
+        if (attachedFiles.length === 0) {
+          fileListPreview.innerHTML = "";
+          return;
+        }
+        fileListPreview.innerHTML = attachedFiles.map((f, i) => `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 6px; margin-top: 6px; font-size: 0.85rem;">
+            <span>📎 ${f.name} (${(f.size/1024/1024).toFixed(1)} MB)</span>
+            <button type="button" onclick="removeAttachedFile(${i})" style="background: none; border: none; color: #EF4444; cursor: pointer;">✕</button>
+          </div>
+        `).join("");
+      }
+
+      window.removeAttachedFile = function(index) {
+        attachedFiles.splice(index, 1);
+        renderFilePreview();
+      };
+
+      // Form submission handler to senthilmurugansanthos@gmail.com
+      const form = document.getElementById("project-enquiry-form");
+      if (form) {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById("client-name").value.trim();
+          const email = document.getElementById("client-email").value.trim();
+          const whatsapp = document.getElementById("client-whatsapp").value.trim();
+          const pkg = document.getElementById("project-package").value;
+          const aspectRatio = document.getElementById("video-aspect-ratio").value;
+          const turnaround = document.getElementById("project-turnaround").value;
+          const notes = document.getElementById("project-notes").value.trim();
+
+          const submitBtn = document.getElementById("enquiry-submit-btn");
+          const originalBtnHtml = submitBtn.innerHTML;
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = `<span>Transmitting to senthilmurugansanthos@gmail.com...</span>`;
+
+          const enquiryPayload = {
+            id: 'enq-' + Date.now(),
+            timestamp: new Date().toISOString(),
+            status: 'New',
+            targetEmail: 'senthilmurugansanthos@gmail.com',
+            clientName: name,
+            clientEmail: email,
+            clientPhone: whatsapp,
+            package: pkg,
+            aspectRatio: aspectRatio,
+            turnaround: turnaround,
+            instructions: notes,
+            filesCount: attachedFiles.length,
+            fileNames: attachedFiles.map(f => f.name).join(", ")
+          };
+
+          // 1. Save to AppState (shows in Studio Admin CMS)
+          if (typeof AppState !== 'undefined' && AppState.saveEnquiry) {
+            AppState.saveEnquiry(enquiryPayload);
+          }
+
+          // 2. Post to Local Node server endpoint /api/enquiry
+          fetch('/api/enquiry', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(enquiryPayload)
+          }).catch(err => console.warn('Local endpoint response:', err));
+
+          // 3. Post to FormSubmit for direct email delivery to senthilmurugansanthos@gmail.com
+          try {
+            await fetch('https://formsubmit.co/ajax/senthilmurugansanthos@gmail.com', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                _subject: `New Video Edit Enquiry: ${pkg} - ${name}`,
+                _template: 'table',
+                "Client Name": name,
+                "Email Address": email,
+                "WhatsApp Number": whatsapp,
+                "Package / Plan": pkg,
+                "Aspect Ratio": aspectRatio,
+                "Delivery Timeline": turnaround,
+                "Attached Files": `${attachedFiles.length} file(s): ${attachedFiles.map(f => f.name).join(', ')}`,
+                "Project Brief & Notes": notes,
+                "Destination Email": "senthilmurugansanthos@gmail.com"
+              })
+            });
+          } catch (err) {
+            console.warn('FormSubmit notification error:', err);
+          }
+
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+
+          // Update WhatsApp follow-up button inside modal
+          const waSuccess = document.getElementById("success-wa-link");
+          if (waSuccess) {
+            const msg = encodeURIComponent(`Hi Sandy! I've sent my project brief to senthilmurugansanthos@gmail.com for the ${pkg} package.`);
+            waSuccess.href = `https://wa.me/?text=${msg}`;
+          }
+
+          // Show confirmation modal
+          const modal = document.getElementById("enquiry-success-modal");
+          if (modal) modal.classList.add("visible");
+
+          form.reset();
+          attachedFiles = [];
+          renderFilePreview();
+        });
+      }
+
+      // WhatsApp Quick Submit
       const waBtn = document.getElementById("whatsapp-quick-submit");
       if (waBtn) {
         waBtn.addEventListener("click", () => {

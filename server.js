@@ -106,7 +106,8 @@ async function fetchRealInstagramData() {
 const server = http.createServer(async (req, res) => {
   // CORS & Security Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -116,6 +117,83 @@ const server = http.createServer(async (req, res) => {
 
   const parsedUrl = new URL(req.url, `http://${req.headers.host || '127.0.0.1'}`);
   const pathname = parsedUrl.pathname;
+
+  // Enquiry Submission Endpoint - routes to senthilmurugansanthos@gmail.com
+  if (pathname === '/api/enquiry' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const enquiryData = JSON.parse(body || '{}');
+        const enquiryRecord = {
+          id: 'enq-' + Date.now(),
+          receivedAt: new Date().toISOString(),
+          targetEmail: 'senthilmurugansanthos@gmail.com',
+          ...enquiryData
+        };
+
+        // Persist to local enquiries.json
+        const enquiriesFilePath = path.join(__dirname, 'enquiries.json');
+        let currentEnquiries = [];
+        try {
+          if (fs.existsSync(enquiriesFilePath)) {
+            currentEnquiries = JSON.parse(fs.readFileSync(enquiriesFilePath, 'utf8') || '[]');
+          }
+        } catch (e) {
+          currentEnquiries = [];
+        }
+        currentEnquiries.unshift(enquiryRecord);
+        fs.writeFileSync(enquiriesFilePath, JSON.stringify(currentEnquiries, null, 2), 'utf8');
+
+        // Forward to FormSubmit for direct delivery to senthilmurugansanthos@gmail.com
+        try {
+          const formSubmitPayload = JSON.stringify({
+            _subject: `New Video Edit Enquiry: ${enquiryRecord.package || 'Custom'} - ${enquiryRecord.name || 'Client'}`,
+            _template: 'table',
+            "Client Name": enquiryRecord.name || 'Not provided',
+            "Client Email": enquiryRecord.email || 'Not provided',
+            "Client WhatsApp": enquiryRecord.whatsapp || 'Not provided',
+            "Package Selected": enquiryRecord.package || 'Not specified',
+            "Aspect Ratio": enquiryRecord.aspect_ratio || '9:16',
+            "Turnaround": enquiryRecord.turnaround || 'Standard',
+            "Project Brief & Notes": enquiryRecord.notes || '',
+            "Submitted At": enquiryRecord.receivedAt
+          });
+
+          const fsReq = https.request({
+            hostname: 'formsubmit.co',
+            port: 443,
+            path: '/ajax/senthilmurugansanthos@gmail.com',
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': Buffer.byteLength(formSubmitPayload),
+              'Accept': 'application/json'
+            }
+          });
+          fsReq.on('error', (err) => console.warn('FormSubmit backup forward error:', err.message));
+          fsReq.write(formSubmitPayload);
+          fsReq.end();
+        } catch (err) {
+          console.warn('FormSubmit forward attempt:', err.message);
+        }
+
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify({
+          success: true,
+          message: 'Enquiry successfully recorded and forwarded to senthilmurugansanthos@gmail.com',
+          enquiryId: enquiryRecord.id
+        }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid JSON body' }));
+      }
+    });
+    return;
+  }
 
   // Realtime API endpoint for @_sndy_edits
   if (pathname === '/api/instagram') {

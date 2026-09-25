@@ -1,0 +1,24 @@
+[
+  {
+    "id": "enq-1790344200620",
+    "receivedAt": "2026-09-25T13:50:00.620Z",
+    "targetEmail": "senthilmurugansanthos@gmail.com",
+    "whatsapp": "+919876500000",
+    "name": "Rohit Sharma",
+    "aspect_ratio": "9:16",
+    "email": "rohit@creator.io",
+    "package": "sndy-pro",
+    "turnaround": "24h",
+    "notes": "Need 15 viral fitness reels edited with velocity beat-sync!"
+  },
+  {
+    "id": "enq-1790344102570",
+    "receivedAt": "2026-09-25T13:48:22.570Z",
+    "targetEmail": "senthilmurugansanthos@gmail.com",
+    "email": "test@example.com",
+    "whatsapp": "+919876543210",
+    "notes": "Test enquiry delivery",
+    "name": "Test Client",
+    "package": "Sndy Pro"
+  }
+]
