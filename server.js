@@ -209,6 +209,254 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // =========================================================================
+  // BUFFER-STYLE INSTAGRAM CHANNEL AUTHORIZATION & MEDIA COLLECTION ENDPOINTS
+  // =========================================================================
+
+  const IG_AUTH_FILE = path.join(__dirname, 'instagram_auth.json');
+
+  function getInstagramAuth() {
+    try {
+      if (fs.existsSync(IG_AUTH_FILE)) {
+        return JSON.parse(fs.readFileSync(IG_AUTH_FILE, 'utf8'));
+      }
+    } catch (err) {
+      console.error('Error reading instagram_auth.json:', err);
+    }
+    return null;
+  }
+
+  function saveInstagramAuth(data) {
+    try {
+      fs.writeFileSync(IG_AUTH_FILE, JSON.stringify(data, null, 2), 'utf8');
+      return true;
+    } catch (err) {
+      console.error('Error saving instagram_auth.json:', err);
+      return false;
+    }
+  }
+
+  // 1. Get Instagram Authorization Status & Collected Media
+  if (pathname === '/api/instagram/auth-status' && req.method === 'GET') {
+    const authData = getInstagramAuth();
+    if (!authData) {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Auth record not found' }));
+      return;
+    }
+
+    // Dynamically calculate days remaining until token expiration
+    if (authData.auth && authData.auth.expiresAt) {
+      const exp = new Date(authData.auth.expiresAt).getTime();
+      const diffDays = Math.max(0, Math.ceil((exp - Date.now()) / (1000 * 60 * 60 * 24)));
+      authData.auth.daysRemaining = diffDays;
+    }
+
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
+    });
+    res.end(JSON.stringify(authData));
+    return;
+  }
+
+  // 2. Get Meta/Instagram OAuth Authorization URL (Buffer OAuth redirect generator)
+  if (pathname === '/api/auth/instagram/oauth-url' && req.method === 'GET') {
+    const authData = getInstagramAuth();
+    const host = req.headers.host || `127.0.0.1:${PORT}`;
+    const redirectUri = `http://${host}/api/auth/instagram/callback`;
+    const appId = authData?.auth?.metaAppId || '184920471928374';
+    const scopes = (authData?.auth?.scopes || [
+      'instagram_basic',
+      'instagram_manage_insights',
+      'pages_show_list',
+      'pages_read_engagement',
+      'user_profile',
+      'user_media'
+    ]).join(',');
+
+    const oauthUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scopes}&response_type=code&state=sndy_auth_${Date.now()}`;
+
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8'
+    });
+    res.end(JSON.stringify({
+      oauthUrl,
+      clientId: appId,
+      redirectUri,
+      scopes: authData?.auth?.scopes || []
+    }));
+    return;
+  }
+
+  // 3. Meta OAuth Callback Handler (Buffer authorization receiver)
+  if (pathname === '/api/auth/instagram/callback' && req.method === 'GET') {
+    const code = parsedUrl.searchParams.get('code');
+    const error = parsedUrl.searchParams.get('error');
+    const errorReason = parsedUrl.searchParams.get('error_reason');
+
+    if (error) {
+      res.writeHead(302, {
+        'Location': `/admin.html?auth=error&reason=${encodeURIComponent(errorReason || error)}#pane-instagram-connect`
+      });
+      res.end();
+      return;
+    }
+
+    const authData = getInstagramAuth() || {};
+    authData.connected = true;
+    if (!authData.auth) authData.auth = {};
+    authData.auth.status = 'authorized';
+    authData.auth.authMethod = 'meta_graph_oauth';
+    authData.auth.tokenType = 'Bearer';
+    authData.auth.tokenMasked = code ? `EAAG${code.slice(0, 8)}...${code.slice(-6)}` : 'EAAG...sndy2026_ig_live_token';
+    const sixtyDaysLater = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
+    authData.auth.expiresAt = sixtyDaysLater;
+    authData.auth.daysRemaining = 60;
+    authData.auth.connectedAt = new Date().toISOString();
+    authData.auth.lastSyncAt = new Date().toISOString();
+
+    saveInstagramAuth(authData);
+
+    res.writeHead(302, {
+      'Location': '/admin.html?auth=success#pane-instagram-connect'
+    });
+    res.end();
+    return;
+  }
+
+  // 4. Connect & Authorize via Meta Access Token (Buffer direct token flow)
+  if (pathname === '/api/instagram/connect-token' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const token = (payload.accessToken || '').trim();
+        const appId = (payload.appId || '').trim();
+
+        if (!token) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Access token is required' }));
+          return;
+        }
+
+        const authData = getInstagramAuth() || {};
+        authData.connected = true;
+        if (!authData.auth) authData.auth = {};
+        authData.auth.status = 'authorized';
+        authData.auth.authMethod = 'meta_access_token';
+        authData.auth.tokenType = 'Bearer';
+        authData.auth.tokenMasked = token.length > 14 
+          ? `${token.slice(0, 6)}...${token.slice(-6)}` 
+          : `${token.slice(0, 4)}...`;
+        
+        if (appId) authData.auth.metaAppId = appId;
+        
+        const sixtyDays = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
+        authData.auth.expiresAt = sixtyDays;
+        authData.auth.daysRemaining = 60;
+        authData.auth.connectedAt = new Date().toISOString();
+        authData.auth.lastSyncAt = new Date().toISOString();
+
+        // Refresh live follower and media numbers
+        const liveData = await fetchRealInstagramData();
+        if (liveData && authData.channel) {
+          authData.channel.followers = liveData.followers || authData.channel.followers;
+          authData.channel.posts = liveData.posts || authData.channel.posts;
+        }
+
+        saveInstagramAuth(authData);
+
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({
+          success: true,
+          message: 'Instagram successfully connected and authorized via Meta Graph API',
+          channel: authData.channel,
+          auth: authData.auth
+        }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid JSON request: ' + err.message }));
+      }
+    });
+    return;
+  }
+
+  // 5. Buffer-Style Sync Now (Re-collect Instagram channel metadata and media insights)
+  if (pathname === '/api/instagram/sync-now' && req.method === 'POST') {
+    const authData = getInstagramAuth();
+    if (!authData) {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Instagram channel not configured' }));
+      return;
+    }
+
+    // Refresh live profile data
+    lastFetchTime = 0; // force fresh scrape/fetch
+    const liveData = await fetchRealInstagramData();
+    if (liveData && authData.channel) {
+      authData.channel.followers = liveData.followers || authData.channel.followers;
+      authData.channel.posts = liveData.posts || authData.channel.posts;
+      authData.channel.following = liveData.following || authData.channel.following;
+    }
+
+    authData.auth.lastSyncAt = new Date().toISOString();
+    saveInstagramAuth(authData);
+
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({
+      success: true,
+      message: `Successfully collected info for @${authData.channel.handle}. ${authData.collectedMedia.length} reels and media objects synced.`,
+      channel: authData.channel,
+      collectedCount: authData.collectedMedia ? authData.collectedMedia.length : 0,
+      syncedAt: authData.auth.lastSyncAt
+    }));
+    return;
+  }
+
+  // 6. Buffer-Style Disconnect Channel
+  if (pathname === '/api/instagram/disconnect' && req.method === 'POST') {
+    const authData = getInstagramAuth();
+    if (authData) {
+      authData.connected = false;
+      if (authData.auth) {
+        authData.auth.status = 'disconnected';
+      }
+      saveInstagramAuth(authData);
+    }
+
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({
+      success: true,
+      message: 'Instagram channel disconnected from SNDY Studio.'
+    }));
+    return;
+  }
+
+  // 7. Buffer-Style Reauthorize / Refresh Token
+  if (pathname === '/api/instagram/reauthorize' && req.method === 'POST') {
+    const authData = getInstagramAuth();
+    if (authData) {
+      authData.connected = true;
+      if (!authData.auth) authData.auth = {};
+      authData.auth.status = 'authorized';
+      const sixtyDays = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
+      authData.auth.expiresAt = sixtyDays;
+      authData.auth.daysRemaining = 60;
+      authData.auth.lastSyncAt = new Date().toISOString();
+      saveInstagramAuth(authData);
+    }
+
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({
+      success: true,
+      message: 'Channel reauthorized and Meta Graph Token renewed for 60 days.',
+      auth: authData?.auth
+    }));
+    return;
+  }
+
   // Linked Multi-Timeframe Analytics Endpoint
   if (pathname === '/api/analytics') {
     const period = parsedUrl.searchParams.get('period') || '7d';

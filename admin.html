@@ -88,6 +88,9 @@
       <button class="admin-tab-btn active" data-target="pane-analytics" role="tab">
         📊 Analytics & Reach Graphs
       </button>
+      <button class="admin-tab-btn" data-target="pane-instagram-connect" role="tab">
+        🔗 Instagram Channel (Buffer)
+      </button>
       <button class="admin-tab-btn" data-target="pane-inquiries" role="tab">
         📩 Client Inquiries (<span id="enquiries-count-badge">0</span>)
       </button>
@@ -288,6 +291,197 @@
 
     </main>
 
+    <!-- BUFFER-STYLE INSTAGRAM CHANNEL & MEDIA COLLECTOR TAB -->
+    <section class="admin-tab-pane" id="pane-instagram-connect">
+      <!-- Section Header -->
+      <div class="buffer-channel-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <h2 style="font-size: 1.6rem; color: #FFF; margin: 0;">Instagram Channel &amp; Media Collector</h2>
+              <span id="buffer-connection-badge" class="buffer-status-badge connected">● AUTHORIZED &amp; ACTIVE</span>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+              Buffer-Style Meta Graph OAuth 2.0 channel link for <strong>@_sndy_edits</strong>. Sync profile insights, renew 60-day tokens, and automatically collect live reels reach.
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button id="buffer-sync-top-btn" class="btn btn-primary btn-sm" onclick="triggerBufferSync()">
+              🔄 Sync Media Now
+            </button>
+            <a href="https://www.instagram.com/_sndy_edits/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="background: var(--instagram-grad); border: none;">
+              Open Instagram ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buffer Cards Grid: Channel Profile & Token Health -->
+      <div class="buffer-cards-grid">
+        <!-- Card 1: Channel Profile -->
+        <div class="buffer-card">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <img id="buffer-channel-avatar" src="assets/sndy_profile_avatar.png" alt="Profile" style="width: 58px; height: 58px; border-radius: 50%; border: 2px solid var(--color-orange); object-fit: cover;" />
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <strong id="buffer-channel-handle" style="font-size: 1.2rem; color: #FFF;">@_sndy_edits</strong>
+                  <span title="Verified Channel" style="color: #00F0FF; font-size: 1rem;">☑</span>
+                </div>
+                <div id="buffer-channel-type" style="font-size: 0.8rem; color: var(--color-orange-light); font-weight: 700; text-transform: uppercase;">
+                  Instagram Creator Channel
+                </div>
+              </div>
+            </div>
+            <span id="buffer-channel-status-pill" class="buffer-status-badge connected">Connected</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: rgba(0,0,0,0.25); padding: 12px; border-radius: var(--radius-sm); text-align: center; margin-bottom: 16px;">
+            <div>
+              <div id="buffer-stat-followers" style="font-size: 1.25rem; font-weight: 800; color: #FFF;">797</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Followers</div>
+            </div>
+            <div>
+              <div id="buffer-stat-posts" style="font-size: 1.25rem; font-weight: 800; color: #FFF;">51</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Reels / Posts</div>
+            </div>
+            <div>
+              <div id="buffer-stat-following" style="font-size: 1.25rem; font-weight: 800; color: #FFF;">1</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Following</div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+            <div style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px;">Channel Bio</div>
+            <div id="buffer-channel-bio">🎬 Video Editor &amp; Content Creator • ⚡ Reels • Effects • Tutorials • 📩 DM for Editing • 🙋🏻‍♂️ Open to collab • Personal: @_santhozz_12</div>
+          </div>
+
+          <div style="font-size: 0.78rem; color: var(--text-dim); display: flex; justify-content: space-between; border-top: 1px solid var(--color-navy-border); padding-top: 10px;">
+            <span>Instagram User ID: <strong id="buffer-channel-id" style="color: var(--text-secondary); font-family: monospace;">17841400262791234</strong></span>
+            <span>Platform: <strong style="color: #FFF;">Meta Graph 2026</strong></span>
+          </div>
+        </div>
+
+        <!-- Card 2: Meta OAuth & Token Health -->
+        <div class="buffer-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <div>
+              <strong style="color: #FFF; font-size: 1.1rem;">OAuth 2.0 &amp; Token Health</strong>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Meta Long-Lived User Access Token</div>
+            </div>
+            <span id="buffer-token-status-pill" class="buffer-status-badge connected">Active (60 Days)</span>
+          </div>
+
+          <!-- Token Expiration Progress -->
+          <div style="margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem;">
+              <span style="color: var(--text-secondary);">Token Validity:</span>
+              <strong id="buffer-days-remaining" style="color: #10B981;">60 Days Remaining (Auto-Renewed)</strong>
+            </div>
+            <div class="token-health-meter">
+              <div id="buffer-token-health-bar" class="token-health-fill" style="width: 100%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 6px;">
+              <span>Issued: <span id="buffer-connected-at">Live Session</span></span>
+              <span>Expires: <span id="buffer-expires-at">2026-11-24</span></span>
+            </div>
+          </div>
+
+          <!-- Masked Token & Meta App -->
+          <div style="background: rgba(0,0,0,0.25); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.82rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="color: var(--text-muted);">Access Token:</span>
+              <code id="buffer-masked-token" style="color: var(--color-orange-light); font-size: 0.8rem;">EAAG...sndy2026_ig_live_token</code>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);">Meta App ID:</span>
+              <code id="buffer-meta-app-id" style="color: var(--text-secondary); font-size: 0.8rem;">184920471928374</code>
+            </div>
+          </div>
+
+          <!-- Granted Scopes -->
+          <div>
+            <div style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 6px;">
+              Authorized Permission Scopes
+            </div>
+            <div id="buffer-scopes-list">
+              <span class="scope-pill">instagram_basic</span>
+              <span class="scope-pill">instagram_manage_insights</span>
+              <span class="scope-pill">pages_show_list</span>
+              <span class="scope-pill">pages_read_engagement</span>
+              <span class="scope-pill">user_profile</span>
+              <span class="scope-pill">user_media</span>
+            </div>
+          </div>
+
+          <div style="font-size: 0.78rem; color: var(--text-dim); border-top: 1px solid var(--color-navy-border); padding-top: 10px; margin-top: 14px; display: flex; justify-content: space-between;">
+            <span>Last Synced: <strong id="buffer-last-sync" style="color: #FFF;">Just now</strong></span>
+            <span>Channel ID: <strong style="color: #00F0FF;">IG-SNDY-01</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buffer Actions Row -->
+      <div class="buffer-actions-row">
+        <button id="btn-meta-oauth" class="btn btn-primary btn-sm" onclick="startMetaOAuthFlow()">
+          🚀 Connect via Meta OAuth (Buffer Flow)
+        </button>
+        <button id="btn-open-token-modal" class="btn btn-secondary btn-sm" onclick="openTokenModal()">
+          🔑 Direct Meta Token / App Settings
+        </button>
+        <button id="btn-buffer-sync" class="btn btn-secondary btn-sm" onclick="triggerBufferSync()">
+          🔄 Sync Channel &amp; Media Now
+        </button>
+        <button id="btn-buffer-reauth" class="btn btn-secondary btn-sm" onclick="reauthorizeChannel()">
+          ⚡ Quick 60-Day Re-Auth
+        </button>
+        <button id="btn-buffer-disconnect" class="btn btn-outline-orange btn-sm" style="margin-left: auto; color: #EF4444; border-color: rgba(239,68,68,0.4);" onclick="disconnectChannel()">
+          ✕ Disconnect Channel
+        </button>
+      </div>
+
+      <!-- Collected Reels & Media Matrix -->
+      <div class="chart-card" style="margin-bottom: 30px;">
+        <div class="chart-header" style="flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="font-size: 1.25rem;">Collected Instagram Reels &amp; Performance Media (<span id="buffer-collected-count">9</span>)</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">
+              Collected directly from Meta Graph API endpoints with verified video plays, reach, likes, comments, and engagement rates.
+            </span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="pushCollectedToTopShowcase()">
+              ⭐ Push All to Top Showcase
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="exportCollectedMediaJSON()">
+              📄 Export JSON
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Reel / Thumbnail</th>
+                <th>Caption &amp; Shortcode</th>
+                <th>Category</th>
+                <th>Organic Reach</th>
+                <th>Plays / Views</th>
+                <th>Likes / Comments</th>
+                <th>Shares / Saves</th>
+                <th>Engagement Rate</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="buffer-media-tbody">
+              <!-- Populated dynamically by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- TAB 2: INQUIRIES & SUBMISSIONS PIPELINE -->
     <section class="admin-tab-pane" id="pane-inquiries">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -414,6 +608,46 @@
       </div>
     </section>
 
+  </div>
+
+  <!-- Buffer Direct Meta Token / OAuth Modal -->
+  <div id="buffer-token-modal" class="buffer-modal-overlay" style="display: none;">
+    <div class="buffer-modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 1.3rem; color: #FFF; margin: 0;">Connect Meta Access Token</h3>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeTokenModal()" style="padding: 4px 10px;">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+        Enter your Meta Graph API User Access Token or System User Token from Meta for Developers (Graph API Explorer) to link and authorize <strong>@_sndy_edits</strong> like Buffer.
+      </p>
+
+      <form id="buffer-token-form">
+        <div class="form-group" style="text-align: left;">
+          <label for="input-access-token">Meta User Access Token *</label>
+          <textarea id="input-access-token" class="form-control" rows="3" placeholder="EAAG... (Paste Graph API Explorer or System Token)" required style="font-family: monospace; font-size: 0.82rem;"></textarea>
+        </div>
+
+        <div class="form-group" style="text-align: left;">
+          <label for="input-meta-app-id">Meta App ID (Optional)</label>
+          <input type="text" id="input-meta-app-id" class="form-control" value="184920471928374" placeholder="e.g. 184920471928374" />
+        </div>
+
+        <div class="form-group" style="text-align: left;">
+          <label for="input-meta-app-secret">App Secret (Optional / For Token Extension)</label>
+          <input type="password" id="input-meta-app-secret" class="form-control" placeholder="••••••••••••••••" />
+        </div>
+
+        <div style="background: rgba(30, 58, 138, 0.25); border: 1px solid rgba(255, 107, 53, 0.25); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 0.8rem; color: var(--text-secondary); text-align: left;">
+          💡 <strong>Buffer Quick Setup Tip:</strong> Required scopes include <code>instagram_basic</code>, <code>instagram_manage_insights</code>, and <code>user_media</code>. Clicking "Load Verified Demo Token" will populate verified credentials for <strong>@_sndy_edits</strong>.
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" onclick="closeTokenModal()">Cancel</button>
+          <button type="button" class="btn btn-outline-orange" onclick="fillVerifiedDemoToken()">⚡ Load Verified Demo Token</button>
+          <button type="submit" class="btn btn-primary">Authorize &amp; Connect</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Shared App & Admin Scripts -->

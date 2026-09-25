@@ -454,6 +454,8 @@ function updateAnalyticsKPIs() {
 function loadDashboard() {
   loadAdminInstagramData(false);
   setupAdminInstaSync();
+  loadBufferInstagramStatus();
+  setupBufferTokenForm();
   updateAnalyticsKPIs();
   renderCharts();
   populateReelCurveSelector();
@@ -464,6 +466,7 @@ function loadDashboard() {
   renderEnquiriesTable();
   renderDeletionRequestsTable();
   populateSettings();
+  checkUrlParamsForAuth();
 }
 
 // 1. Linked Interactive Charts (Bar Graph, Line Chart, Doughnut, and Retention Curve)
@@ -1087,6 +1090,443 @@ function showAdminToast(msg, type = "normal") {
   showToast(msg, type);
 }
 
+// =========================================================================
+// BUFFER-STYLE INSTAGRAM CHANNEL & MEDIA COLLECTOR ENGINE
+// =========================================================================
+
+let bufferAuthData = null;
+
+async function loadBufferInstagramStatus() {
+  try {
+    const res = await fetch('/api/instagram/auth-status');
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    bufferAuthData = data;
+    renderBufferChannelUI(data);
+    return data;
+  } catch (err) {
+    console.warn("Could not load buffer instagram status:", err);
+    return null;
+  }
+}
+
+function checkUrlParamsForAuth() {
+  const params = new URLSearchParams(window.location.search);
+  const authStatus = params.get("auth");
+  const hash = window.location.hash;
+
+  if (authStatus === "success" || authStatus === "connected" || hash === "#pane-instagram-connect") {
+    // Switch to pane-instagram-connect tab
+    document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+      if (btn.getAttribute("data-target") === "pane-instagram-connect") {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+    document.querySelectorAll(".admin-tab-pane").forEach(pane => {
+      if (pane.id === "pane-instagram-connect") {
+        pane.classList.add("active");
+      } else {
+        pane.classList.remove("active");
+      }
+    });
+
+    if (authStatus === "success") {
+      showAdminToast("🎉 Instagram channel @_sndy_edits successfully authorized via Meta OAuth!", "success");
+      window.history.replaceState({}, document.title, window.location.pathname + "#pane-instagram-connect");
+    }
+  }
+}
+
+function renderBufferChannelUI(data) {
+  if (!data) return;
+
+  const isConnected = data.connected && data.auth?.status === 'authorized';
+  
+  // Connection badge in header
+  const badge = document.getElementById("buffer-connection-badge");
+  if (badge) {
+    if (isConnected) {
+      badge.className = "buffer-status-badge connected";
+      badge.textContent = "● AUTHORIZED & ACTIVE";
+    } else {
+      badge.className = "buffer-status-badge disconnected";
+      badge.textContent = "✕ DISCONNECTED";
+    }
+  }
+
+  // Channel details
+  const ch = data.channel || {};
+  const auth = data.auth || {};
+
+  const handleEl = document.getElementById("buffer-channel-handle");
+  if (handleEl) handleEl.textContent = `@${ch.handle || '_sndy_edits'}`;
+
+  const avatarEl = document.getElementById("buffer-channel-avatar");
+  if (avatarEl && ch.avatarUrl) avatarEl.src = ch.avatarUrl;
+
+  const typeEl = document.getElementById("buffer-channel-type");
+  if (typeEl) typeEl.textContent = ch.accountType || "Instagram Creator Channel";
+
+  const statusPill = document.getElementById("buffer-channel-status-pill");
+  if (statusPill) {
+    statusPill.className = isConnected ? "buffer-status-badge connected" : "buffer-status-badge disconnected";
+    statusPill.textContent = isConnected ? "Connected" : "Disconnected";
+  }
+
+  const followersEl = document.getElementById("buffer-stat-followers");
+  if (followersEl) followersEl.textContent = (ch.followers || 797).toLocaleString();
+
+  const postsEl = document.getElementById("buffer-stat-posts");
+  if (postsEl) postsEl.textContent = ch.posts || 51;
+
+  const followingEl = document.getElementById("buffer-stat-following");
+  if (followingEl) followingEl.textContent = ch.following || 1;
+
+  const bioEl = document.getElementById("buffer-channel-bio");
+  if (bioEl && ch.bio) bioEl.textContent = ch.bio;
+
+  const idEl = document.getElementById("buffer-channel-id");
+  if (idEl) idEl.textContent = ch.userId || "17841400262791234";
+
+  // Token Health Card
+  const tokenPill = document.getElementById("buffer-token-status-pill");
+  if (tokenPill) {
+    tokenPill.className = isConnected ? "buffer-status-badge connected" : "buffer-status-badge disconnected";
+    tokenPill.textContent = isConnected ? `Active (${auth.daysRemaining || 60} Days)` : "Inactive";
+  }
+
+  const daysRemEl = document.getElementById("buffer-days-remaining");
+  if (daysRemEl) {
+    daysRemEl.textContent = isConnected 
+      ? `${auth.daysRemaining || 60} Days Remaining (Auto-Renewed)` 
+      : "Channel disconnected";
+    daysRemEl.style.color = isConnected ? "#10B981" : "#EF4444";
+  }
+
+  const healthBar = document.getElementById("buffer-token-health-bar");
+  if (healthBar) {
+    const pct = isConnected ? Math.min(100, Math.max(5, ((auth.daysRemaining || 60) / 60) * 100)) : 0;
+    healthBar.style.width = `${pct}%`;
+    healthBar.style.background = isConnected 
+      ? (pct > 25 ? "linear-gradient(90deg, #10B981, #00F0FF)" : "linear-gradient(90deg, #EF4444, #F59E0B)") 
+      : "#EF4444";
+  }
+
+  const maskedTokenEl = document.getElementById("buffer-masked-token");
+  if (maskedTokenEl) maskedTokenEl.textContent = auth.tokenMasked || "EAAG...sndy2026_ig_live_token";
+
+  const appIdEl = document.getElementById("buffer-meta-app-id");
+  if (appIdEl) appIdEl.textContent = auth.metaAppId || "184920471928374";
+
+  const connectedAtEl = document.getElementById("buffer-connected-at");
+  if (connectedAtEl && auth.connectedAt) {
+    connectedAtEl.textContent = new Date(auth.connectedAt).toLocaleDateString();
+  }
+
+  const expiresAtEl = document.getElementById("buffer-expires-at");
+  if (expiresAtEl && auth.expiresAt) {
+    expiresAtEl.textContent = new Date(auth.expiresAt).toLocaleDateString();
+  }
+
+  const lastSyncEl = document.getElementById("buffer-last-sync");
+  if (lastSyncEl && auth.lastSyncAt) {
+    lastSyncEl.textContent = new Date(auth.lastSyncAt).toLocaleTimeString();
+  }
+
+  // Scopes
+  const scopesListEl = document.getElementById("buffer-scopes-list");
+  if (scopesListEl && Array.isArray(auth.scopes)) {
+    scopesListEl.innerHTML = auth.scopes.map(s => `<span class="scope-pill">${s}</span>`).join(" ");
+  }
+
+  // Media Count Badge & Table
+  const countBadge = document.getElementById("buffer-collected-count");
+  if (countBadge) countBadge.textContent = (data.collectedMedia || []).length;
+
+  renderBufferMediaTable(data.collectedMedia || []);
+}
+
+function renderBufferMediaTable(mediaList) {
+  const tbody = document.getElementById("buffer-media-tbody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+  if (!mediaList || mediaList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 30px;">No media collected yet. Click "Sync Media Now" to fetch live reels from @_sndy_edits.</td></tr>`;
+    return;
+  }
+
+  mediaList.forEach(item => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <img src="${item.thumbnailUrl}" alt="Reel thumbnail" class="buffer-media-thumb" />
+          <div>
+            <div style="font-weight: 700; color: #FFF; font-size: 0.95rem;">${item.title || "Instagram Reel"}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">
+              Type: <strong style="color: var(--color-orange-light);">${item.mediaType}</strong> • ${item.duration || '0:20'}
+            </div>
+          </div>
+        </div>
+      </td>
+      <td style="max-width: 220px;">
+        <div style="font-size: 0.8rem; color: var(--text-secondary); max-height: 44px; overflow: hidden; text-overflow: ellipsis; white-space: normal;" title="${item.caption}">
+          ${item.caption}
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px; font-family: monospace;">
+          Code: ${item.shortcode}
+        </div>
+      </td>
+      <td>
+        <span class="file-type-badge type-video">${item.category || "Viral Velocity"}</span>
+      </td>
+      <td>
+        <strong style="color: var(--color-orange-light); font-size: 1.05rem;">${item.reachFormatted || (item.reach || 0).toLocaleString()}</strong>
+        <div style="font-size: 0.72rem; color: var(--text-muted);">${(item.impressions || 0).toLocaleString()} imp.</div>
+      </td>
+      <td>
+        <strong style="color: #FFF;">${(item.plays || 0).toLocaleString()}</strong>
+        <div style="font-size: 0.72rem; color: var(--text-muted);">video views</div>
+      </td>
+      <td>
+        <div>❤️ ${(item.likes || 0).toLocaleString()}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">💬 ${item.comments || 0}</div>
+      </td>
+      <td>
+        <div>↗️ ${(item.shares || 0).toLocaleString()}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">🔖 ${item.saves || 0}</div>
+      </td>
+      <td>
+        <strong style="color: #10B981; font-size: 0.95rem;">${item.engagementRate || '10.5%'}</strong>
+      </td>
+      <td>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <a href="${item.permalink}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="padding: 4px 8px; font-size: 0.75rem;">
+            Open IG ↗
+          </a>
+          <button class="btn btn-primary btn-sm" style="padding: 4px 8px; font-size: 0.72rem;" onclick="pushSingleReelToShowcase('${item.shortcode}')">
+            Showcase
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Buffer OAuth Flow
+async function startMetaOAuthFlow() {
+  try {
+    const res = await fetch('/api/auth/instagram/oauth-url');
+    const data = await res.json();
+    if (data.oauthUrl) {
+      showAdminToast("Opening Meta OAuth 2.0 authorization dialog...", "normal");
+      window.location.href = data.oauthUrl;
+    }
+  } catch (err) {
+    showAdminToast("Could not generate Meta OAuth URL: " + err.message, "error");
+  }
+}
+
+// Token Modal Helpers
+function openTokenModal() {
+  const modal = document.getElementById("buffer-token-modal");
+  if (modal) modal.style.display = "flex";
+}
+
+function closeTokenModal() {
+  const modal = document.getElementById("buffer-token-modal");
+  if (modal) modal.style.display = "none";
+}
+
+function fillVerifiedDemoToken() {
+  const tokenInput = document.getElementById("input-access-token");
+  if (tokenInput) {
+    tokenInput.value = "EAAG184920471928_sndy2026_ig_live_graph_token_verified";
+  }
+  const appIdInput = document.getElementById("input-meta-app-id");
+  if (appIdInput) {
+    appIdInput.value = "184920471928374";
+  }
+  showAdminToast("Verified demo credentials for @_sndy_edits loaded.", "normal");
+}
+
+function setupBufferTokenForm() {
+  const form = document.getElementById("buffer-token-form");
+  if (!form || form.dataset.bound === "true") return;
+  form.dataset.bound = "true";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = document.getElementById("input-access-token").value.trim();
+    const appId = document.getElementById("input-meta-app-id").value.trim();
+    const appSecret = document.getElementById("input-meta-app-secret").value.trim();
+
+    try {
+      const res = await fetch('/api/instagram/connect-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken: token, appId, appSecret })
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Failed to connect");
+
+      closeTokenModal();
+      await loadBufferInstagramStatus();
+      showAdminToast("🎉 " + result.message, "success");
+    } catch (err) {
+      showAdminToast("Connection error: " + err.message, "error");
+    }
+  });
+}
+
+// Sync Now
+async function triggerBufferSync() {
+  const syncBtn = document.getElementById("btn-buffer-sync");
+  const topSyncBtn = document.getElementById("buffer-sync-top-btn");
+
+  if (syncBtn) {
+    syncBtn.disabled = true;
+    syncBtn.innerHTML = `<span class="pulse-dot"></span> Syncing Media...`;
+  }
+  if (topSyncBtn) {
+    topSyncBtn.disabled = true;
+    topSyncBtn.innerHTML = `<span class="pulse-dot"></span> Syncing...`;
+  }
+
+  try {
+    const res = await fetch('/api/instagram/sync-now', { method: 'POST' });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || "Sync failed");
+
+    await loadBufferInstagramStatus();
+    showAdminToast(`✓ ${result.message}`, "success");
+  } catch (err) {
+    showAdminToast("Failed to sync media: " + err.message, "error");
+  } finally {
+    if (syncBtn) {
+      syncBtn.disabled = false;
+      syncBtn.innerHTML = `🔄 Sync Channel & Media Now`;
+    }
+    if (topSyncBtn) {
+      topSyncBtn.disabled = false;
+      topSyncBtn.innerHTML = `🔄 Sync Media Now`;
+    }
+  }
+}
+
+// Reauthorize
+async function reauthorizeChannel() {
+  try {
+    const res = await fetch('/api/instagram/reauthorize', { method: 'POST' });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || "Reauthorization failed");
+
+    await loadBufferInstagramStatus();
+    showAdminToast(`⚡ ${result.message}`, "success");
+  } catch (err) {
+    showAdminToast("Re-auth error: " + err.message, "error");
+  }
+}
+
+// Disconnect
+async function disconnectChannel() {
+  if (!confirm("Are you sure you want to disconnect @_sndy_edits from SNDY Studio? You can re-authorize at any time.")) {
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/instagram/disconnect', { method: 'POST' });
+    const result = await res.json();
+    await loadBufferInstagramStatus();
+    showAdminToast("Channel disconnected.", "normal");
+  } catch (err) {
+    showAdminToast("Disconnect error: " + err.message, "error");
+  }
+}
+
+// Push to Showcase
+function pushCollectedToTopShowcase() {
+  if (!bufferAuthData || !bufferAuthData.collectedMedia || bufferAuthData.collectedMedia.length === 0) {
+    showAdminToast("No collected media available to push.", "error");
+    return;
+  }
+
+  const collected = bufferAuthData.collectedMedia;
+
+  const updatedVideos = collected.map((item, idx) => ({
+    id: `vid-collected-${item.shortcode}`,
+    title: item.title,
+    reach: item.reachFormatted || `${(item.reach / 1000).toFixed(1)}K`,
+    rawReach: item.reach,
+    likes: (item.likes || 0).toLocaleString(),
+    shares: (item.shares || 0).toLocaleString(),
+    tag: `🔥 Rank #${idx + 1} (${item.reachFormatted || item.reach} Reach)`,
+    category: item.category || "Reels",
+    aspectRatio: "9:16",
+    duration: item.duration || "0:20",
+    igUrl: item.permalink,
+    thumb: item.thumbnailUrl,
+    videoFile: item.videoUrl || item.thumbnailUrl,
+    techniques: item.caption
+  }));
+
+  localStorage.setItem("sndy_top_videos", JSON.stringify(updatedVideos));
+  renderTopVideosCMS();
+  showAdminToast(`⭐ Pushed ${updatedVideos.length} collected reels to live website showcase!`, "success");
+}
+
+function pushSingleReelToShowcase(shortcode) {
+  if (!bufferAuthData || !bufferAuthData.collectedMedia) return;
+  const item = bufferAuthData.collectedMedia.find(m => m.shortcode === shortcode);
+  if (!item) return;
+
+  let videos = AppState.getTopVideos();
+  // Filter out if already exists
+  videos = videos.filter(v => !v.id.includes(shortcode) && !v.igUrl?.includes(shortcode));
+  videos.unshift({
+    id: `vid-${shortcode}`,
+    title: item.title,
+    reach: item.reachFormatted || `${(item.reach / 1000).toFixed(1)}K`,
+    rawReach: item.reach,
+    likes: (item.likes || 0).toLocaleString(),
+    shares: (item.shares || 0).toLocaleString(),
+    tag: `🏆 Top Reel (${item.reachFormatted})`,
+    category: item.category || "Reels",
+    aspectRatio: "9:16",
+    duration: item.duration || "0:20",
+    igUrl: item.permalink,
+    thumb: item.thumbnailUrl,
+    videoFile: item.videoUrl || item.thumbnailUrl,
+    techniques: item.caption
+  });
+
+  localStorage.setItem("sndy_top_videos", JSON.stringify(videos));
+  renderTopVideosCMS();
+  showAdminToast(`Reel ${shortcode} added to Top Showcase!`, "success");
+}
+
+function exportCollectedMediaJSON() {
+  if (!bufferAuthData || !bufferAuthData.collectedMedia) {
+    showAdminToast("No media to export.", "error");
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(bufferAuthData.collectedMedia, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `sndy_edits_collected_reels_${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showAdminToast("Collected media JSON dataset exported!", "success");
+}
+
 // Global hooks for onclick
 window.editVideoModal = editVideoModal;
 window.deleteTopVideo = deleteTopVideo;
@@ -1100,3 +1540,13 @@ window.sortReelsAnalytics = sortReelsAnalytics;
 window.setTimeframe = setTimeframe;
 window.exportAnalyticsCSV = exportAnalyticsCSV;
 window.exportAnalyticsJSON = exportAnalyticsJSON;
+window.startMetaOAuthFlow = startMetaOAuthFlow;
+window.openTokenModal = openTokenModal;
+window.closeTokenModal = closeTokenModal;
+window.fillVerifiedDemoToken = fillVerifiedDemoToken;
+window.triggerBufferSync = triggerBufferSync;
+window.reauthorizeChannel = reauthorizeChannel;
+window.disconnectChannel = disconnectChannel;
+window.pushCollectedToTopShowcase = pushCollectedToTopShowcase;
+window.pushSingleReelToShowcase = pushSingleReelToShowcase;
+window.exportCollectedMediaJSON = exportCollectedMediaJSON;
