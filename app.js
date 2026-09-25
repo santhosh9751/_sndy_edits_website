@@ -443,12 +443,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// 1. Initialize Top 5 Videos
+// 1. Initialize Top Videos (Spotlight on Homepage, Full List on Reels page)
 function initTopVideos() {
   const container = document.getElementById("top-videos-list");
   if (!container) return;
 
-  const videos = AppState.getTopVideos().slice(0, 5);
+  const isHomepage = window.location.pathname.endsWith("index.html") || window.location.pathname === "/" || !window.location.pathname.includes(".html");
+  const count = isHomepage ? 3 : 5;
+  const videos = AppState.getTopVideos().slice(0, count);
   container.innerHTML = "";
 
   videos.forEach((video, index) => {
