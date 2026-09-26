@@ -954,7 +954,7 @@ function submitEnquiry() {
 
 function generateWhatsAppDirect() {
   const data = collectFormData();
-  const phone = "919876543210"; // SNDY EDITS Official WhatsApp
+  const phone = "918807854679"; // SNDY EDITS Official WhatsApp (+91 88078 54679)
 
   let message = `🎬 *NEW VIDEO EDIT ENQUIRY - SNDY EDITS*\n`;
   message += `━━━━━━━━━━━━━━━━━━━━━\n`;
