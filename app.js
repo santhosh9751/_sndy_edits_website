@@ -1059,36 +1059,14 @@ function applyInstagramData(data) {
   if (visitBtn && data.instagramUrl) visitBtn.href = data.instagramUrl;
 }
 
-// Automatic Second-by-Second Realtime Sync Engine
+// Quiet Background Instagram Data Sync (No distracting tickers or "seconds ago" counters)
 function initAutoInstaSync() {
-  let secondsSinceSync = 0;
-  const timerEl = document.getElementById("auto-sync-timer");
-
-  // Initial immediate fetch
   syncRealtimeInstagram(false);
 
-  // 1. Ticking timer that updates every single second
+  // Periodically refresh stats quietly in the background without UI tickers
   setInterval(() => {
-    secondsSinceSync++;
-    if (timerEl) {
-      if (secondsSinceSync <= 1) {
-        timerEl.textContent = "just now";
-      } else {
-        timerEl.textContent = `${secondsSinceSync}s ago`;
-      }
-    }
-  }, 1000);
-
-  // 2. Automated background fetch cycle every 4 seconds without any clicking needed
-  setInterval(async () => {
-    try {
-      await syncRealtimeInstagram(false);
-      secondsSinceSync = 0;
-      if (timerEl) timerEl.textContent = "just now";
-    } catch (e) {
-      // Keep running smoothly
-    }
-  }, 4000);
+    syncRealtimeInstagram(false).catch(() => {});
+  }, 5 * 60 * 1000);
 }
 
 // 6. Accessible Modals System
