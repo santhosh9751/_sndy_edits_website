@@ -30,7 +30,7 @@ let igCache = {
   displayName: "🧩 @_sndy_edits",
   ownerName: "Santhosh (Sandy)",
   personalHandle: "_santhozz_12",
-  followers: 797,
+  followers: 814,
   following: 1,
   posts: 51,
   bio: [
@@ -459,19 +459,21 @@ const server = http.createServer(async (req, res) => {
             }
           });
 
-          // 3. AUTO-RANKING: Sort all reels descending by Reach so any spike immediately rises
-          authData.collectedMedia.sort((a, b) => (b.reach || 0) - (a.reach || 0));
+          // 3. AUTO-RANKING: Sort all reels descending by views/plays (or reach)
+          const getReelScore = r => Math.max(Number(r.plays) || 0, Number(r.reach) || 0);
+          authData.collectedMedia.sort((a, b) => getReelScore(b) - getReelScore(a));
 
           // 4. Assign new viral rank (1 to 10)
           authData.collectedMedia.forEach((reel, idx) => {
             reel.viralRank = idx + 1;
             reel.rank = idx + 1;
+            const viewCountStr = reel.plays >= 1000 ? `${(reel.plays / 1000).toFixed(reel.plays >= 100000 ? 0 : 1)}K` : `${reel.plays || reel.reach}`;
             if (idx === 0) {
-              reel.tag = `🏆 #1 All-Time Most Viral (${reel.reachFormatted} Reach)`;
+              reel.tag = `🏆 #1 All-Time Most Viral (${viewCountStr} Plays • Viral Spike)`;
             } else if (reel.hasSpike) {
               reel.tag = `⚡ VIRAL SPIKE (+${(reel.playsChange || 0).toLocaleString()} views)`;
             } else {
-              reel.tag = `🔥 Rank #${idx + 1} (${reel.reachFormatted} Reach)`;
+              reel.tag = `🔥 Rank #${idx + 1} (${viewCountStr} Plays)`;
             }
           });
         }
@@ -503,8 +505,9 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/reels/top' && req.method === 'GET') {
     const authData = getInstagramAuth();
     const media = authData?.collectedMedia || [];
-    // Always sorted by reach descending, return exactly top 10
-    const top10 = [...media].sort((a, b) => (b.reach || 0) - (a.reach || 0)).slice(0, 10);
+    // Always sorted by plays/reach descending, return exactly top 10
+    const getReelScore = r => Math.max(Number(r.plays) || 0, Number(r.reach) || 0);
+    const top10 = [...media].sort((a, b) => getReelScore(b) - getReelScore(a)).slice(0, 10);
 
     res.writeHead(200, {
       'Content-Type': 'application/json; charset=utf-8',

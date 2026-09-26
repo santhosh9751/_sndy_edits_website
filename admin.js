@@ -800,7 +800,8 @@ function renderTopVideosCMS() {
   // Prefer media from live bufferAuthData or AppState fallback
   let videos = [];
   if (bufferAuthData && Array.isArray(bufferAuthData.collectedMedia) && bufferAuthData.collectedMedia.length > 0) {
-    videos = [...bufferAuthData.collectedMedia].sort((a, b) => (b.reach || 0) - (a.reach || 0)).slice(0, 10);
+    const getScore = r => Math.max(Number(r.plays) || 0, Number(r.reach) || 0);
+    videos = [...bufferAuthData.collectedMedia].sort((a, b) => getScore(b) - getScore(a)).slice(0, 10);
   } else {
     videos = AppState.getTopVideos();
   }
