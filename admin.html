@@ -95,7 +95,7 @@
         📩 Client Inquiries (<span id="enquiries-count-badge">0</span>)
       </button>
       <button class="admin-tab-btn" data-target="pane-videos-cms" role="tab">
-        🎬 Top Reels CMS
+        🎬 Top 10 Reels (Auto-Ranked)
       </button>
       <button class="admin-tab-btn" data-target="pane-assets-cms" role="tab">
         📦 Creator Templates CMS
@@ -444,14 +444,14 @@
       <div class="chart-card" style="margin-bottom: 30px;">
         <div class="chart-header" style="flex-wrap: wrap; gap: 12px;">
           <div>
-            <h3 style="font-size: 1.25rem;">Collected Instagram Reels &amp; Performance Media (<span id="buffer-collected-count">9</span>)</h3>
+            <h3 style="font-size: 1.25rem;">Collected Instagram Reels &amp; Performance Media (<span id="buffer-collected-count">10</span>)</h3>
             <span style="font-size: 0.82rem; color: var(--text-muted);">
               Collected directly from Meta Graph API endpoints with verified video plays, reach, likes, comments, and engagement rates.
             </span>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button class="btn btn-secondary btn-sm" onclick="pushCollectedToTopShowcase()">
-              ⭐ Push All to Top Showcase
+            <button class="btn btn-primary btn-sm" onclick="triggerProperInstagramSync()">
+              🔄 Live Sync Reels
             </button>
             <button class="btn btn-secondary btn-sm" onclick="exportCollectedMediaJSON()">
               📄 Export JSON
@@ -512,18 +512,27 @@
       </div>
     </section>
 
-    <!-- TAB 3: TOP 5 VIDEOS CMS -->
+    <!-- TAB 3: TOP 10 REELS (AUTO-RANKED BY SYNC) -->
     <section class="admin-tab-pane" id="pane-videos-cms">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
         <div>
-          <h2 style="font-size: 1.5rem;">Top 5 Instagram Videos Showcase CMS</h2>
-          <p style="font-size: 0.9rem; color: var(--text-muted);">Update reach numbers, video titles, thumbnail covers, and viral badges displayed on the live public site.</p>
+          <h2 style="font-size: 1.5rem;">Top 10 Instagram Reels (Auto-Ranked by Instagram Sync)</h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">
+            All 10 reels are auto-ranked by live reach, views, likes, and comments from @_sndy_edits. When any reel spikes or changes, it dynamically climbs the Top 10 ranking.
+          </p>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="addNewTopVideo()">+ Add New Video</button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn btn-primary btn-sm" onclick="triggerProperInstagramSync()">
+            🔄 Live Sync Reels
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="openSpikeSimulatorModal()">
+            ⚡ Test Spike on a Reel
+          </button>
+        </div>
       </div>
 
       <div id="admin-videos-list">
-        <!-- Populated by admin.js -->
+        <!-- Populated dynamically by admin.js -->
       </div>
     </section>
 

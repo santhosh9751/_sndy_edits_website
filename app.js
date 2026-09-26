@@ -185,6 +185,27 @@ const DEFAULT_TOP_VIDEOS = [
     thumb: "assets/reels/reel-top9.png",
     videoFile: "assets/reels/reel-top9.mp4",
     techniques: "Two-wheeler motorcycle cinematic cut with multi-clip velocity curve transitions."
+  },
+  {
+    id: "reel-10",
+    rank: 10,
+    code: "DaX1EB6vy8i",
+    title: "Bboy Dancer • Beat-Sync Kinetic Velocity Reel",
+    reach: "5.4K",
+    rawReach: 5420,
+    plays: 6100,
+    likes: "348",
+    comments: "22",
+    shares: "95",
+    saves: "88",
+    tag: "⚡ Beat-Sync Kinetic Velocity",
+    category: "Creative Visuals",
+    aspectRatio: "9:16",
+    duration: "0:20",
+    igUrl: "https://www.instagram.com/_sndy_edits/reel/DaX1EB6vy8i/",
+    thumb: "assets/reels/reel-top10.png",
+    videoFile: "assets/reels/reel-top10.mp4",
+    techniques: "Audio-reactive backflip acceleration, kinetic shake impact, desaturated cinematic color contrast."
   }
 ];
 
@@ -316,15 +337,14 @@ class AppState {
   static getTopVideos() {
     const data = localStorage.getItem("sndy_top_videos");
     let videos = data ? JSON.parse(data) : DEFAULT_TOP_VIDEOS;
-    // Auto-migrate and purge old dummy data, old stock IDs, or obsolete ordering
-    const hasOldStock = videos.some(v => (v.id && v.id.startsWith("vid-")) || (v.thumb && v.thumb.includes("unsplash")));
-    const hasDummyMillions = videos.some(v => (v.rawReach && v.rawReach > 100000) || (typeof v.reach === 'string' && v.reach.includes('M')));
-    const needsTopRankRefresh = !videos[0] || !videos[0].videoFile || videos[0].code !== "DZDIbQlvGQq";
-    if (hasOldStock || hasDummyMillions || needsTopRankRefresh) {
+    // Auto-migrate if less than 10 or has obsolete non-code structure
+    if (!Array.isArray(videos) || videos.length < 10 || videos.some(v => v.id && v.id.startsWith("vid-") && !v.code)) {
       localStorage.removeItem("sndy_top_videos");
       videos = DEFAULT_TOP_VIDEOS;
     }
-    return videos;
+    // Always sort descending by reach/rawReach so any spike automatically determines rank
+    videos.sort((a, b) => (b.rawReach || b.reach || 0) - (a.rawReach || a.reach || 0));
+    return videos.slice(0, 10);
   }
 
   static getPackagePlans() {
@@ -463,20 +483,22 @@ function initTopVideos() {
         <span class="rank-badge">#${index + 1}</span>
         <span class="reach-badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-          ${video.reach} Reach
+          ${video.reach} Reach ${video.hasSpike ? '⚡ SPIKING' : ''}
         </span>
         <button class="video-play-btn" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
         </button>
       </div>
       <div class="video-details">
-        <div style="margin-bottom: 6px;">
+        <div style="margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
           <span style="font-size: 0.75rem; font-weight: 700; color: var(--color-orange-light);">${video.tag}</span>
+          ${video.playsChange > 0 ? `<span style="font-size: 0.72rem; color: #10B981; font-weight: 700; background: rgba(16,185,129,0.12); padding: 2px 6px; border-radius: 4px;">📈 +${video.playsChange.toLocaleString()} views</span>` : ''}
         </div>
         <h4 class="video-title">${video.title}</h4>
-        <div class="video-stats-bar">
-          <span>❤️ ${video.likes} likes</span>
-          <span>🔄 ${video.shares} shares</span>
+        <div class="video-stats-bar" style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <span>👁️ ${(video.plays || video.rawReach || 0).toLocaleString()} views</span>
+          <span>❤️ ${video.likes} ${video.likesChange > 0 ? `<small style="color: #10B981; font-weight: 700;">(+${video.likesChange})</small>` : ''}</span>
+          <span>💬 ${video.comments || 0} ${video.commentsChange > 0 ? `<small style="color: #10B981; font-weight: 700;">(+${video.commentsChange})</small>` : ''}</span>
           <span>⏱️ ${video.duration}</span>
         </div>
         <div class="video-actions">
@@ -548,19 +570,31 @@ function openVideoPlayerModal(videoId) {
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
               <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 12px 14px;">
                 <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Organic Reach</div>
-                <div style="font-size: 1.45rem; font-weight: 900; color: var(--color-orange-light);">${video.reach}</div>
+                <div style="font-size: 1.45rem; font-weight: 900; color: var(--color-orange-light);">
+                  ${video.reach}
+                  ${video.reachChange > 0 ? `<small style="font-size: 0.75rem; color: #10B981; display: block;">+${video.reachChange.toLocaleString()} spike</small>` : ''}
+                </div>
               </div>
               <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 12px 14px;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Video Views / Plays</div>
+                <div style="font-size: 1.45rem; font-weight: 900; color: #00F0FF;">
+                  👁️ ${(video.plays || video.rawReach || 0).toLocaleString()}
+                  ${video.playsChange > 0 ? `<small style="font-size: 0.75rem; color: #10B981; display: block;">+${video.playsChange.toLocaleString()} views</small>` : ''}
+                </div>
+              </div>
+              <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 10px 14px;">
                 <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Likes</div>
-                <div style="font-size: 1.45rem; font-weight: 900; color: #FFF;">❤️ ${video.likes}</div>
+                <div style="font-size: 1.05rem; font-weight: 800; color: #FFF;">
+                  ❤️ ${video.likes}
+                  ${video.likesChange > 0 ? `<small style="font-size: 0.75rem; color: #10B981;">(+${video.likesChange})</small>` : ''}
+                </div>
               </div>
               <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 10px 14px;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Shares</div>
-                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">🔄 ${video.shares}</div>
-              </div>
-              <div style="background: rgba(16,28,56,0.7); border: 1px solid var(--color-navy-border); border-radius: 8px; padding: 10px 14px;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Saves</div>
-                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">💾 ${video.saves}</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Comments</div>
+                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">
+                  💬 ${video.comments || 0}
+                  ${video.commentsChange > 0 ? `<small style="font-size: 0.75rem; color: #10B981;">(+${video.commentsChange})</small>` : ''}
+                </div>
               </div>
             </div>
 
@@ -1059,13 +1093,61 @@ function applyInstagramData(data) {
   if (visitBtn && data.instagramUrl) visitBtn.href = data.instagramUrl;
 }
 
-// Quiet Background Instagram Data Sync (No distracting tickers or "seconds ago" counters)
+// Quiet Background Instagram Data & Auto-Ranked Top Reels Sync
+async function syncLiveTopReelsFromServer() {
+  try {
+    const res = await fetch("/api/reels/top");
+    if (!res.ok) return;
+    const json = await res.json();
+    if (Array.isArray(json.reels) && json.reels.length > 0) {
+      const liveVideos = json.reels.map((m, idx) => ({
+        id: `reel-${idx + 1}`,
+        rank: idx + 1,
+        code: m.shortcode,
+        title: m.title,
+        reach: m.reachFormatted || (m.reach ? `${(m.reach/1000).toFixed(1)}K` : "5K"),
+        rawReach: m.reach || 5000,
+        plays: m.plays || 0,
+        playsChange: m.playsChange || 0,
+        likes: (m.likes || 0).toLocaleString(),
+        likesChange: m.likesChange || 0,
+        comments: m.comments || 0,
+        commentsChange: m.commentsChange || 0,
+        reachChange: m.reachChange || 0,
+        hasSpike: !!m.hasSpike,
+        shares: (m.shares || 0).toLocaleString(),
+        saves: (m.saves || 0).toLocaleString(),
+        tag: m.tag || (m.hasSpike ? `⚡ VIRAL SPIKE (+${(m.playsChange||0).toLocaleString()} views)` : `🔥 Rank #${idx + 1} (${m.reachFormatted || m.reach})`),
+        category: m.category || "Creative Visuals",
+        aspectRatio: "9:16",
+        duration: m.duration || "0:20",
+        igUrl: m.permalink || `https://www.instagram.com/_sndy_edits/reel/${m.shortcode}/`,
+        thumb: m.thumbnailUrl || `assets/reels/reel-top${idx + 1}.png`,
+        videoFile: m.videoUrl || `assets/reels/reel-top${idx + 1}.mp4`,
+        techniques: m.caption || ""
+      }));
+      localStorage.setItem("sndy_top_videos", JSON.stringify(liveVideos));
+
+      // Refresh currently open containers if present
+      if (document.getElementById("top-videos-list")) initTopVideos();
+      if (document.getElementById("full-reels-grid") && typeof renderReelsPage === 'function') {
+        const activeTab = document.querySelector("#reels-filter-tabs .filter-btn.active");
+        renderReelsPage(activeTab ? activeTab.getAttribute("data-category") : "all");
+      }
+    }
+  } catch (e) {
+    // quiet fallback
+  }
+}
+
 function initAutoInstaSync() {
   syncRealtimeInstagram(false);
+  syncLiveTopReelsFromServer();
 
   // Periodically refresh stats quietly in the background without UI tickers
   setInterval(() => {
     syncRealtimeInstagram(false).catch(() => {});
+    syncLiveTopReelsFromServer().catch(() => {});
   }, 5 * 60 * 1000);
 }
 

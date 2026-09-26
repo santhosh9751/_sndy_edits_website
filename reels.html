@@ -91,7 +91,7 @@
 
         <!-- Reels Category Filter Tabs -->
         <div class="filter-group" id="reels-filter-tabs" role="tablist" style="margin-bottom: 36px;">
-          <button class="filter-btn active" data-category="all" role="tab" aria-selected="true">All Real Reels (9)</button>
+          <button class="filter-btn active" data-category="all" role="tab" aria-selected="true">Top 10 Instagram Reels</button>
           <button class="filter-btn" data-category="Creative Visuals" role="tab" aria-selected="false">Creative Visuals</button>
           <button class="filter-btn" data-category="Automotive &amp; Drift" role="tab" aria-selected="false">Automotive &amp; Drift</button>
           <button class="filter-btn" data-category="CapCut Tutorials" role="tab" aria-selected="false">CapCut Tutorials</button>
@@ -168,20 +168,22 @@
             <span class="rank-badge">#${index + 1}</span>
             <span class="reach-badge">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              ${video.reach} Reach
+              ${video.reach} Reach ${video.hasSpike ? '⚡ SPIKING' : ''}
             </span>
             <button class="video-play-btn" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
             </button>
           </div>
           <div class="video-details">
-            <div style="margin-bottom: 6px;">
+            <div style="margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
               <span style="font-size: 0.75rem; font-weight: 700; color: var(--color-orange-light);">${video.tag}</span>
+              ${video.playsChange > 0 ? `<span style="font-size: 0.72rem; color: #10B981; font-weight: 700; background: rgba(16,185,129,0.12); padding: 2px 6px; border-radius: 4px;">📈 +${video.playsChange.toLocaleString()} views</span>` : ''}
             </div>
             <h4 class="video-title">${video.title}</h4>
-            <div class="video-stats-bar">
-              <span>❤️ ${video.likes} likes</span>
-              <span>💬 ${video.comments || '20+'} comments</span>
+            <div class="video-stats-bar" style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <span>👁️ ${(video.plays || video.rawReach || 0).toLocaleString()} views</span>
+              <span>❤️ ${video.likes} ${video.likesChange > 0 ? `<small style="color: #10B981; font-weight: 700;">(+${video.likesChange})</small>` : ''}</span>
+              <span>💬 ${video.comments || 0} ${video.commentsChange > 0 ? `<small style="color: #10B981; font-weight: 700;">(+${video.commentsChange})</small>` : ''}</span>
               <span>⏱️ ${video.duration}</span>
             </div>
             <div class="video-actions">

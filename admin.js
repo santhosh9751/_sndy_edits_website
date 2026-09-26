@@ -792,97 +792,118 @@ function exportAnalyticsJSON() {
 }
 
 // 2. CMS: Manage Top 5 Videos
+// 2. CMS: Auto-Ranked Top 10 Instagram Reels (Driven by Live Instagram Sync)
 function renderTopVideosCMS() {
   const container = document.getElementById("admin-videos-list");
   if (!container) return;
 
-  const videos = AppState.getTopVideos();
+  // Prefer media from live bufferAuthData or AppState fallback
+  let videos = [];
+  if (bufferAuthData && Array.isArray(bufferAuthData.collectedMedia) && bufferAuthData.collectedMedia.length > 0) {
+    videos = [...bufferAuthData.collectedMedia].sort((a, b) => (b.reach || 0) - (a.reach || 0)).slice(0, 10);
+  } else {
+    videos = AppState.getTopVideos();
+  }
+
   container.innerHTML = "";
 
   videos.forEach((video, index) => {
     const row = document.createElement("div");
     row.className = "cms-item-card";
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.justifyContent = "space-between";
+    row.style.flexWrap = "wrap";
+    row.style.gap = "14px";
+    row.style.padding = "16px";
+    row.style.background = video.hasSpike ? "rgba(255, 107, 53, 0.08)" : "var(--bg-surface)";
+    row.style.border = video.hasSpike ? "1.5px solid var(--color-orange)" : "1px solid var(--color-navy-border)";
+    row.style.borderRadius = "var(--radius-md)";
+    row.style.marginBottom = "12px";
+
+    const reachDelta = video.reachChange > 0 ? `<small style="color: #10B981; font-weight: 700;">(+${video.reachChange.toLocaleString()})</small>` : '';
+    const playsDelta = video.playsChange > 0 ? `<small style="color: #10B981; font-weight: 700;">(+${video.playsChange.toLocaleString()})</small>` : '';
+    const likesDelta = video.likesChange > 0 ? `<small style="color: #10B981; font-weight: 700;">(+${video.likesChange})</small>` : '';
+    const commentsDelta = video.commentsChange > 0 ? `<small style="color: #10B981; font-weight: 700;">(+${video.commentsChange})</small>` : '';
+
     row.innerHTML = `
-      <div style="display: flex; gap: 16px; align-items: center; flex: 1;">
-        <img src="${video.thumb}" alt="thumb" style="width: 50px; height: 75px; object-fit: cover; border-radius: 6px;" />
+      <div style="display: flex; gap: 16px; align-items: center; flex: 1; min-width: 280px;">
+        <div style="position: relative; width: 56px; height: 84px; flex-shrink: 0; border-radius: 8px; overflow: hidden;">
+          <img src="${video.thumbnailUrl || video.thumb}" alt="thumb" style="width: 100%; height: 100%; object-fit: cover;" />
+          <span style="position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.8); color: #FFF; font-size: 0.7rem; font-weight: 900; padding: 2px 6px; border-radius: 4px;">#${index + 1}</span>
+        </div>
         <div>
-          <strong style="color: #FFF; font-size: 1rem;">#${index + 1} - ${video.title}</strong>
-          <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
-            Reach: <span style="color: var(--color-orange-light); font-weight: 700;">${video.reach}</span> • 
-            Likes: ${video.likes} • Tag: ${video.tag}
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <strong style="color: #FFF; font-size: 1.05rem;">${video.title}</strong>
+            ${video.hasSpike ? '<span class="badge" style="background: #EF4444; color: #FFF; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; animation: pulse 2s infinite;">⚡ VIRAL SPIKE</span>' : ''}
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+            ID: <span style="font-family: monospace; color: var(--color-orange-light);">${video.shortcode || video.code}</span> • Category: <strong style="color: #FFF;">${video.category || 'Creative Visuals'}</strong>
+          </div>
+          <div style="display: flex; gap: 16px; font-size: 0.82rem; margin-top: 6px; flex-wrap: wrap; color: var(--text-secondary);">
+            <span>Reach: <strong style="color: var(--color-orange-light);">${video.reachFormatted || video.reach}</strong> ${reachDelta}</span>
+            <span>Views: <strong style="color: #00F0FF;">${(video.plays || video.rawReach || 0).toLocaleString()}</strong> ${playsDelta}</span>
+            <span>Likes: <strong style="color: #FFF;">${video.likes}</strong> ${likesDelta}</span>
+            <span>Comments: <strong style="color: #FFF;">${video.comments || 0}</strong> ${commentsDelta}</span>
           </div>
         </div>
       </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn btn-secondary btn-sm" onclick="editVideoModal('${video.id}')">Edit</button>
-        <button class="btn btn-secondary btn-sm" style="color: #EF4444;" onclick="deleteTopVideo('${video.id}')">Delete</button>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button class="btn btn-secondary btn-sm" style="color: var(--color-orange-light); border-color: rgba(255,107,53,0.4);" onclick="simulateReelSpike('${video.shortcode || video.code}')" title="Simulate a sudden spike in reach and views to test automatic ranking promotion">
+          ⚡ Spike (+35K)
+        </button>
+        <a href="${video.permalink || video.igUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+          Open Reel ↗
+        </a>
       </div>
     `;
     container.appendChild(row);
   });
 }
 
-function editVideoModal(videoId) {
-  const videos = AppState.getTopVideos();
-  const video = videos.find(v => v.id === videoId);
-  if (!video) return;
+// Live Instagram Synchronization with views/likes/comments change tracking
+async function triggerProperInstagramSync() {
+  showAdminToast("🔄 Syncing @_sndy_edits from Instagram...", "normal");
+  try {
+    const res = await fetch("/api/instagram/sync-now", { method: "POST" });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Sync failed");
 
-  const newTitle = prompt("Enter Video Title:", video.title);
-  if (newTitle === null) return;
-
-  const newReach = prompt("Enter Reach Count (e.g. 14.8K):", video.reach);
-  if (newReach === null) return;
-
-  const newTag = prompt("Enter Tag (e.g. 🔥 #1 Trending):", video.tag);
-  if (newTag === null) return;
-
-  video.title = newTitle.trim() || video.title;
-  video.reach = newReach.trim() || video.reach;
-  video.tag = newTag.trim() || video.tag;
-
-  localStorage.setItem("sndy_top_videos", JSON.stringify(videos));
-  renderTopVideosCMS();
-  showAdminToast("Top Video updated! Live website refreshed.", "success");
+    showAdminToast(`✅ ${data.message}`, "success");
+    await initBufferChannelTab();
+    renderTopVideosCMS();
+    renderAllReelsAnalyticsTable();
+  } catch (err) {
+    showAdminToast(`Sync error: ${err.message}`, "error");
+  }
 }
 
-function addNewTopVideo() {
-  const title = prompt("Enter New Video Title:", "New Viral Reel");
-  if (!title) return;
+// Simulate spike on reel and test automatic promotion
+async function simulateReelSpike(shortcode) {
+  if (!shortcode) return;
+  showAdminToast(`⚡ Sending viral spike to reel ${shortcode}...`, "normal");
+  try {
+    const res = await fetch("/api/instagram/simulate-spike", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ shortcode, boost: 35000 })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Spike failed");
 
-  const reach = prompt("Enter Reach Count (e.g. 8.5K):", "8.5K") || "5.0K";
-  const likes = prompt("Enter Likes Count (e.g. 450):", "450") || "300";
-  const tag = prompt("Enter Tag (e.g. ⚡ Viral Sound):", "⚡ Trending") || "⚡ Trending";
-  const thumb = prompt("Enter Thumbnail Image URL:", "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80") || "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80";
-
-  const videos = AppState.getTopVideos();
-  videos.unshift({
-    id: "vid-" + Date.now(),
-    title: title.trim(),
-    reach: reach.trim(),
-    rawReach: 8500,
-    likes: likes.trim(),
-    shares: "45",
-    tag: tag.trim(),
-    category: "Reels / TikTok",
-    aspectRatio: "9:16",
-    duration: "0:25",
-    igUrl: "https://www.instagram.com/_sndy_edits/",
-    thumb: thumb.trim(),
-    techniques: "Custom speed ramping, bass impact hits, and kinetic typography."
-  });
-
-  localStorage.setItem("sndy_top_videos", JSON.stringify(videos));
-  renderTopVideosCMS();
-  showAdminToast("New Video added to Top 5 Showcase!", "success");
+    showAdminToast(`🚀 ${data.message}`, "success");
+    await initBufferChannelTab();
+    renderTopVideosCMS();
+    renderAllReelsAnalyticsTable();
+  } catch (err) {
+    showAdminToast(`Spike error: ${err.message}`, "error");
+  }
 }
 
-function deleteTopVideo(videoId) {
-  if (!confirm("Are you sure you want to remove this video from Top Videos?")) return;
-  let videos = AppState.getTopVideos();
-  videos = videos.filter(v => v.id !== videoId);
-  localStorage.setItem("sndy_top_videos", JSON.stringify(videos));
-  renderTopVideosCMS();
-  showAdminToast("Video removed from showcase.", "normal");
+function openSpikeSimulatorModal() {
+  const shortcode = prompt("Enter shortcode of the reel to spike (e.g. DaX1EB6vy8i, DaQFnasvQn8, Dcd41EgTCmj):", "DaX1EB6vy8i");
+  if (!shortcode) return;
+  simulateReelSpike(shortcode.trim());
 }
 
 // 3. CMS: Manage CapCut Models & Free Creator Assets
@@ -1307,8 +1328,8 @@ function renderBufferMediaTable(mediaList) {
           <a href="${item.permalink}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="padding: 4px 8px; font-size: 0.75rem;">
             Open IG ↗
           </a>
-          <button class="btn btn-primary btn-sm" style="padding: 4px 8px; font-size: 0.72rem;" onclick="pushSingleReelToShowcase('${item.shortcode}')">
-            Showcase
+          <button class="btn btn-secondary btn-sm" style="padding: 4px 8px; font-size: 0.72rem; color: var(--color-orange-light); border-color: rgba(255,107,53,0.3);" onclick="simulateReelSpike('${item.shortcode}')" title="Test viral spike on this reel">
+            ⚡ Spike (+35K)
           </button>
         </div>
       </td>
@@ -1448,66 +1469,7 @@ async function disconnectChannel() {
   }
 }
 
-// Push to Showcase
-function pushCollectedToTopShowcase() {
-  if (!bufferAuthData || !bufferAuthData.collectedMedia || bufferAuthData.collectedMedia.length === 0) {
-    showAdminToast("No collected media available to push.", "error");
-    return;
-  }
-
-  const collected = bufferAuthData.collectedMedia;
-
-  const updatedVideos = collected.map((item, idx) => ({
-    id: `vid-collected-${item.shortcode}`,
-    title: item.title,
-    reach: item.reachFormatted || `${(item.reach / 1000).toFixed(1)}K`,
-    rawReach: item.reach,
-    likes: (item.likes || 0).toLocaleString(),
-    shares: (item.shares || 0).toLocaleString(),
-    tag: `🔥 Rank #${idx + 1} (${item.reachFormatted || item.reach} Reach)`,
-    category: item.category || "Reels",
-    aspectRatio: "9:16",
-    duration: item.duration || "0:20",
-    igUrl: item.permalink,
-    thumb: item.thumbnailUrl,
-    videoFile: item.videoUrl || item.thumbnailUrl,
-    techniques: item.caption
-  }));
-
-  localStorage.setItem("sndy_top_videos", JSON.stringify(updatedVideos));
-  renderTopVideosCMS();
-  showAdminToast(`⭐ Pushed ${updatedVideos.length} collected reels to live website showcase!`, "success");
-}
-
-function pushSingleReelToShowcase(shortcode) {
-  if (!bufferAuthData || !bufferAuthData.collectedMedia) return;
-  const item = bufferAuthData.collectedMedia.find(m => m.shortcode === shortcode);
-  if (!item) return;
-
-  let videos = AppState.getTopVideos();
-  // Filter out if already exists
-  videos = videos.filter(v => !v.id.includes(shortcode) && !v.igUrl?.includes(shortcode));
-  videos.unshift({
-    id: `vid-${shortcode}`,
-    title: item.title,
-    reach: item.reachFormatted || `${(item.reach / 1000).toFixed(1)}K`,
-    rawReach: item.reach,
-    likes: (item.likes || 0).toLocaleString(),
-    shares: (item.shares || 0).toLocaleString(),
-    tag: `🏆 Top Reel (${item.reachFormatted})`,
-    category: item.category || "Reels",
-    aspectRatio: "9:16",
-    duration: item.duration || "0:20",
-    igUrl: item.permalink,
-    thumb: item.thumbnailUrl,
-    videoFile: item.videoUrl || item.thumbnailUrl,
-    techniques: item.caption
-  });
-
-  localStorage.setItem("sndy_top_videos", JSON.stringify(videos));
-  renderTopVideosCMS();
-  showAdminToast(`Reel ${shortcode} added to Top Showcase!`, "success");
-}
+// Auto-Ranked Instagram Sync Showcase (Manual push buttons removed as top 10 reels are auto-ranked by live Instagram sync)
 
 function exportCollectedMediaJSON() {
   if (!bufferAuthData || !bufferAuthData.collectedMedia) {
@@ -1530,7 +1492,9 @@ function exportCollectedMediaJSON() {
 // Global hooks for onclick
 window.editVideoModal = editVideoModal;
 window.deleteTopVideo = deleteTopVideo;
-window.addNewTopVideo = addNewTopVideo;
+window.triggerProperInstagramSync = triggerProperInstagramSync;
+window.simulateReelSpike = simulateReelSpike;
+window.openSpikeSimulatorModal = openSpikeSimulatorModal;
 window.editAssetModal = editAssetModal;
 window.deleteAssetCMS = deleteAssetCMS;
 window.addNewAsset = addNewAsset;
@@ -1547,6 +1511,4 @@ window.fillVerifiedDemoToken = fillVerifiedDemoToken;
 window.triggerBufferSync = triggerBufferSync;
 window.reauthorizeChannel = reauthorizeChannel;
 window.disconnectChannel = disconnectChannel;
-window.pushCollectedToTopShowcase = pushCollectedToTopShowcase;
-window.pushSingleReelToShowcase = pushSingleReelToShowcase;
 window.exportCollectedMediaJSON = exportCollectedMediaJSON;
