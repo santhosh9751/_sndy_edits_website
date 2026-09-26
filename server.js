@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = 4200;
+const PORT = process.env.PORT || 4200;
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -708,6 +708,6 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`Server listening on http://127.0.0.1:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server listening on port ${PORT}`);
 });
