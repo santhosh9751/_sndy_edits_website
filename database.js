@@ -383,9 +383,9 @@ export class Database {
       if (fs.existsSync(IG_AUTH_FILE)) {
         const raw = fs.readFileSync(IG_AUTH_FILE, 'utf8');
         const parsed = JSON.parse(raw);
-        // Ensure 113K reel is present at #1, otherwise merge with Golden Snapshot
-        const has113K = parsed?.collectedMedia?.some(m => m.shortcode === 'DdjbPi_zK3B' && (m.plays >= 100000 || m.reach >= 100000));
-        if (has113K) {
+        // Ensure 240K viral reel is present at #1, otherwise merge with Golden Snapshot
+        const has240K = parsed?.collectedMedia?.some(m => m.shortcode === 'DdjbPi_zK3B' && (m.plays >= 200000 || m.reach >= 200000));
+        if (has240K) {
           memoryStore.instagramAuth = parsed;
         } else {
           memoryStore.instagramAuth = { ...GOLDEN_INSTAGRAM_SNAPSHOT, ...parsed, collectedMedia: GOLDEN_INSTAGRAM_SNAPSHOT.collectedMedia };

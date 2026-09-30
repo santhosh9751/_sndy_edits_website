@@ -350,8 +350,10 @@ class AppState {
   static getTopVideos() {
     const data = localStorage.getItem("sndy_top_videos");
     let videos = data ? JSON.parse(data) : DEFAULT_TOP_VIDEOS;
-    if (!Array.isArray(videos) || videos.length === 0) {
+    // Auto-migrate if stored version has old 113K value for DdjbPi_zK3B instead of 240K
+    if (!Array.isArray(videos) || videos.length === 0 || videos.some(v => v.code === "DdjbPi_zK3B" && Number(v.plays) < 200000)) {
       videos = DEFAULT_TOP_VIDEOS;
+      localStorage.setItem("sndy_top_videos", JSON.stringify(videos));
     }
     // Always sort descending by plays/views/reach
     const getScore = v => {
