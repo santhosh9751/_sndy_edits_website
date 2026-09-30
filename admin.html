@@ -70,7 +70,11 @@
         </div>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 14px;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <button id="master-sync-all-btn" class="btn btn-primary btn-sm" onclick="executeMasterSyncEverything()" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); box-shadow: 0 0 20px rgba(255, 107, 53, 0.5); font-weight: 800; border: none; display: flex; align-items: center; gap: 8px;">
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #FFF; animation: pulse 1.5s infinite;"></span>
+          ⚡ MASTER SYNC: SYNC ALL REELS & VIEWS
+        </button>
         <a href="index.html" class="btn btn-secondary btn-sm">
           ← Back to Website
         </a>
@@ -514,25 +518,28 @@
 
     <!-- TAB 3: TOP 10 REELS (AUTO-RANKED BY SYNC) -->
     <section class="admin-tab-pane" id="pane-videos-cms">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+      <div style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(13, 22, 43, 0.8) 100%); border: 1.5px solid var(--color-orange); border-radius: var(--radius-md); padding: 20px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div>
-          <h2 style="font-size: 1.5rem;">Top 10 Instagram Reels (Auto-Ranked by Instagram Sync)</h2>
-          <p style="font-size: 0.9rem; color: var(--text-muted);">
-            All 10 reels are auto-ranked by live reach, views, likes, and comments from @_sndy_edits. When any reel spikes or changes, it dynamically climbs the Top 10 ranking.
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10B981; animation: pulse 1.5s infinite;"></span>
+            <h2 style="font-size: 1.4rem; color: #FFF; margin: 0;">Top 10 Instagram Reels (Live Auto-Ranked)</h2>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0; max-width: 650px;">
+            All 10 reels are auto-ranked strictly by total views and plays. The highest-viewed video is placed at <strong>#1</strong>, and lower-viewed videos get pushed down. Click <strong>Master Sync</strong> to fetch fresh numbers and sync the homepage cards instantly.
           </p>
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button class="btn btn-primary btn-sm" onclick="triggerProperInstagramSync()">
-            🔄 Live Sync Reels
+          <button class="btn btn-primary" onclick="executeMasterSyncEverything()" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); font-weight: 800; border: none; box-shadow: 0 0 15px rgba(255,107,53,0.4);">
+            ⚡ Sync Everything Now
           </button>
           <button class="btn btn-secondary btn-sm" onclick="openSpikeSimulatorModal()">
-            ⚡ Test Spike on a Reel
+            ⚡ Send Test Spike (+35K)
           </button>
         </div>
       </div>
 
       <div id="admin-videos-list">
-        <!-- Populated dynamically by admin.js -->
+        <!-- Populated dynamically by admin.js as high-definition cards -->
       </div>
     </section>
 

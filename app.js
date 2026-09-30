@@ -476,10 +476,14 @@ document.addEventListener("DOMContentLoaded", () => {
   initDataDeletionHandler();
   initAutoInstaSync();
 
-  // Listen for storage events (updates made in Admin CMS reflect here immediately)
+  // Listen for storage and sync events (updates made in Admin CMS reflect here immediately)
   window.addEventListener("storage", (e) => {
-    if (e.key === "sndy_top_videos") initTopVideos();
-    if (e.key === "sndy_creator_assets") initCreatorAssets();
+    if (!e.key || e.key === "sndy_top_videos") initTopVideos();
+    if (!e.key || e.key === "sndy_creator_assets") initCreatorAssets();
+  });
+
+  window.addEventListener("focus", () => {
+    initTopVideos();
   });
 });
 
