@@ -350,14 +350,20 @@ class AppState {
   static getTopVideos() {
     const data = localStorage.getItem("sndy_top_videos");
     let videos = data ? JSON.parse(data) : DEFAULT_TOP_VIDEOS;
-    // Auto-migrate if less than 10 or has obsolete non-code structure or missing 113K reel at #1
-    if (!Array.isArray(videos) || videos.length < 10 || !videos.some(v => v.code === "DdjbPi_zK3B" && (v.plays >= 100000 || v.rawReach >= 100000))) {
-      localStorage.removeItem("sndy_top_videos");
+    if (!Array.isArray(videos) || videos.length === 0) {
       videos = DEFAULT_TOP_VIDEOS;
     }
-    // Always sort descending by plays/views (or rawReach)
-    const getScore = v => (typeof v.plays === 'number' && v.plays > 0) ? v.plays : (typeof v.rawReach === 'number' && v.rawReach > 0) ? v.rawReach : 0;
+    // Always sort descending by plays/views/reach
+    const getScore = v => {
+      const p = Number(v.plays) || 0;
+      const r = Number(v.rawReach) || (typeof v.reach === 'string' && v.reach.includes('K') ? parseFloat(v.reach) * 1000 : Number(v.reach) || 0);
+      return Math.max(p, r);
+    };
     videos.sort((a, b) => getScore(b) - getScore(a));
+    videos.forEach((v, idx) => {
+      v.rank = idx + 1;
+      v.id = `reel-${idx + 1}`;
+    });
     return videos.slice(0, 10);
   }
 

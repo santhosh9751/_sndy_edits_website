@@ -870,6 +870,38 @@ async function triggerProperInstagramSync() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Sync failed");
 
+    // Sync newly ranked Top 10 to localStorage for immediate website reflection
+    if (Array.isArray(data.top10Reels) && data.top10Reels.length > 0) {
+      const liveVideos = data.top10Reels.map((m, idx) => ({
+        id: `reel-${idx + 1}`,
+        rank: idx + 1,
+        code: m.shortcode,
+        title: m.title,
+        reach: m.reachFormatted || (m.reach ? `${(m.reach/1000).toFixed(1)}K` : "5K"),
+        rawReach: m.reach || 5000,
+        plays: m.plays || 0,
+        playsChange: m.playsChange || 0,
+        likes: (m.likes || 0).toLocaleString(),
+        likesChange: m.likesChange || 0,
+        comments: m.comments || 0,
+        commentsChange: m.commentsChange || 0,
+        reachChange: m.reachChange || 0,
+        hasSpike: !!m.hasSpike,
+        shares: (m.shares || 0).toLocaleString(),
+        saves: (m.saves || 0).toLocaleString(),
+        tag: m.tag || (m.hasSpike ? `⚡ VIRAL SPIKE (+${(m.playsChange||0).toLocaleString()} views)` : `🔥 Rank #${idx + 1} (${m.reachFormatted || m.reach})`),
+        category: m.category || "Creative Visuals",
+        aspectRatio: "9:16",
+        duration: m.duration || "0:20",
+        igUrl: m.permalink || `https://www.instagram.com/_sndy_edits/reel/${m.shortcode}/`,
+        thumb: m.thumbnailUrl || `assets/reels/reel-top${idx + 1}.png`,
+        videoFile: m.videoUrl || `assets/reels/reel-top${idx + 1}.mp4`,
+        techniques: m.caption || ""
+      }));
+      localStorage.setItem("sndy_top_videos", JSON.stringify(liveVideos));
+      window.dispatchEvent(new Event('storage'));
+    }
+
     showAdminToast(`✅ ${data.message}`, "success");
     await initBufferChannelTab();
     renderTopVideosCMS();
@@ -891,6 +923,38 @@ async function simulateReelSpike(shortcode) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Spike failed");
+
+    // Sync newly ranked Top 10 to localStorage
+    if (Array.isArray(data.top10Reels) && data.top10Reels.length > 0) {
+      const liveVideos = data.top10Reels.map((m, idx) => ({
+        id: `reel-${idx + 1}`,
+        rank: idx + 1,
+        code: m.shortcode,
+        title: m.title,
+        reach: m.reachFormatted || (m.reach ? `${(m.reach/1000).toFixed(1)}K` : "5K"),
+        rawReach: m.reach || 5000,
+        plays: m.plays || 0,
+        playsChange: m.playsChange || 0,
+        likes: (m.likes || 0).toLocaleString(),
+        likesChange: m.likesChange || 0,
+        comments: m.comments || 0,
+        commentsChange: m.commentsChange || 0,
+        reachChange: m.reachChange || 0,
+        hasSpike: !!m.hasSpike,
+        shares: (m.shares || 0).toLocaleString(),
+        saves: (m.saves || 0).toLocaleString(),
+        tag: m.tag || (m.hasSpike ? `⚡ VIRAL SPIKE (+${(m.playsChange||0).toLocaleString()} views)` : `🔥 Rank #${idx + 1} (${m.reachFormatted || m.reach})`),
+        category: m.category || "Creative Visuals",
+        aspectRatio: "9:16",
+        duration: m.duration || "0:20",
+        igUrl: m.permalink || `https://www.instagram.com/_sndy_edits/reel/${m.shortcode}/`,
+        thumb: m.thumbnailUrl || `assets/reels/reel-top${idx + 1}.png`,
+        videoFile: m.videoUrl || `assets/reels/reel-top${idx + 1}.mp4`,
+        techniques: m.caption || ""
+      }));
+      localStorage.setItem("sndy_top_videos", JSON.stringify(liveVideos));
+      window.dispatchEvent(new Event('storage'));
+    }
 
     showAdminToast(`🚀 ${data.message}`, "success");
     await initBufferChannelTab();
